@@ -47,8 +47,10 @@ body:not(.ready) #hud, body:not(.ready) #zone { display: none; }   /* controls a
 
 /* portrait phone: game on top, controls in the band below it (nothing overlaps the game's HP bar) */
 @media (orientation: portrait) {
-  #stage { align-items: flex-start; padding-top: calc(env(safe-area-inset-top) + 72px); box-sizing: border-box; }
-  #canvas { width: 100%; height: auto; max-height: calc(100% - 72px); }
+  /* fixed bands: 72px for 메뉴/지도 on top, 220px for the stick/buttons below; the game scales into the rest */
+  #stage { align-items: flex-start; box-sizing: border-box;
+    padding: calc(env(safe-area-inset-top) + 72px) 0 calc(env(safe-area-inset-bottom) + 220px); }
+  #canvas { height: 100%; width: auto; max-width: 100%; }
   #hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 16px); right: 12px; }
   #hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 16px); right: 104px; }
 }
