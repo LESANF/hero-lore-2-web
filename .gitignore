@@ -1,5 +1,5 @@
+.DS_Store
+*.jar
+*.zip
 build/
 node_modules/
-*.zip
-*.jar
-.DS_Store

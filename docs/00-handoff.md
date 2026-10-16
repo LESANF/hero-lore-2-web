@@ -17,8 +17,9 @@
 
 ## 진행 상태
 - [x] PR #1 분석 문서 + jar 언랩 도구 + 라이선스
-- [ ] `engine/`: wie 고정 커밋 체크아웃 + `wasm-pack build wie-web --target web` 스크립트, 산출물 `build/engine/`
-- [ ] `web/`: 페이지 + 입력층 + 로딩 화면(1편 스타일)
+- [x] PR #3 `engine/build.sh`: wie 고정 커밋(`engine/WIE_COMMIT`) + 오버레이(`engine/overlay/`) → `build/web/` (wasm 18 MB, 사운드폰트 1 MB). 로컬: `GAME=<영웅서기2.zip> sh engine/build.sh` 후 `cd build/web && python3 -m http.server 8791` → 타이틀·새 게임까지 키보드로 확인(2026-10-16)
+- [ ] 입력층: 떠다니는 스틱 + 원형 버튼(`engine/overlay/src/ts/input.ts` 예정), 키보드는 hero.ts에 있음
+- [ ] 로딩 화면 로고·배경(1편 스타일). 원본 로고는 `img/logo.mph/.mpd` 자체 포맷이라 당장은 타이틀 캡처를 씀
 - [ ] 세이브 내보내기/가져오기
 - [ ] Pages 워크플로 + 게임 파일 공급 방식
 - [ ] 완주 소크 테스트(자동 플레이) 기록 → `docs/02-compat.md`
