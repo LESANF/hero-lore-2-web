@@ -4,16 +4,39 @@ html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow:
 #canvas { image-rendering: pixelated; height: 100%; width: auto; max-width: 100%; aspect-ratio: 3 / 4; object-fit: contain; }
 #canvas:focus { outline: none; }
 
-/* loading screen, same shape as hero-lord-web */
-#status { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
-  padding: 0 24px; box-sizing: border-box; color: #fff; text-align: center; transition: opacity .6s ease;
-  background: radial-gradient(ellipse at 50% 40%, #1d2a52 0%, #0b1326 60%, #060a16 100%); }
-#logo { width: min(70vw, 420px); height: auto; margin-bottom: 18px; image-rendering: pixelated; filter: drop-shadow(0 6px 22px rgba(0,0,0,.6)); }
-#status.done { opacity: 0; pointer-events: none; }
-#bar { width: min(72vw, 460px); height: 6px; border-radius: 999px; background: rgba(255,255,255,.18); overflow: hidden; }
-#fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #ffd56b, #fff4c2 60%, #fff); transition: width .15s linear; }
-#status small { font-size: 13px; letter-spacing: .06em; opacity: .8; min-height: 1.2em; }
-#status pre { margin: 0; white-space: pre-wrap; color: #ffb3b3; font-size: 13px; }
+/* landing: full-bleed night sky, falling snow, logo, one button; the progress bar shows while the engine downloads */
+#landing { position: fixed; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px;
+  padding: 0 24px; box-sizing: border-box; color: #fff; text-align: center; overflow: hidden; transition: opacity .6s ease;
+  background: radial-gradient(ellipse at 50% 30%, #24407a 0%, #0f1b3d 45%, #060a16 100%); }
+#landing.done { opacity: 0; pointer-events: none; }
+#landing > * { position: relative; }
+#logo { width: min(72vw, 440px); height: auto; margin-bottom: 10px; image-rendering: pixelated; mix-blend-mode: screen; /* the crop has a black box; screen-blending drops it on the dark sky */ }
+#start { padding: 14px 44px; border-radius: 999px; border: 2px solid rgba(255,255,255,.85); background: rgba(255,255,255,.12); color: #fff;
+  font: 700 18px/1 system-ui, "Apple SD Gothic Neo", sans-serif; letter-spacing: .08em; cursor: pointer; backdrop-filter: blur(4px);
+  box-shadow: 0 0 24px rgba(120,170,255,.35); }
+#start:active { transform: translateY(1px); background: rgba(255,255,255,.22); }
+#start[disabled] { opacity: .45; cursor: default; }
+#bar { width: min(60vw, 360px); height: 5px; border-radius: 999px; background: rgba(255,255,255,.16); overflow: hidden; }
+#fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #9cc4ff, #e8f1ff 60%, #fff); transition: width .15s linear; }
+#landing small { font-size: 12px; letter-spacing: .06em; opacity: .75; min-height: 1.2em; }
+#landing pre { margin: 0; white-space: pre-wrap; color: #ffb3b3; font-size: 13px; }
+.snow { position: absolute; inset: 0; pointer-events: none; }
+.snow i { position: absolute; top: -6px; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.85); filter: blur(.3px);
+  animation: fall linear infinite; }
+.snow i:nth-child(1) { left: 4%; animation-duration: 11s; animation-delay: -2s; }
+.snow i:nth-child(2) { left: 13%; width: 3px; height: 3px; animation-duration: 14s; animation-delay: -7s; }
+.snow i:nth-child(3) { left: 22%; animation-duration: 9s; animation-delay: -4s; }
+.snow i:nth-child(4) { left: 31%; width: 5px; height: 5px; animation-duration: 16s; animation-delay: -1s; }
+.snow i:nth-child(5) { left: 40%; animation-duration: 12s; animation-delay: -9s; }
+.snow i:nth-child(6) { left: 49%; width: 3px; height: 3px; animation-duration: 10s; animation-delay: -5s; }
+.snow i:nth-child(7) { left: 58%; animation-duration: 15s; animation-delay: -3s; }
+.snow i:nth-child(8) { left: 67%; width: 5px; height: 5px; animation-duration: 13s; animation-delay: -11s; }
+.snow i:nth-child(9) { left: 76%; animation-duration: 9.5s; animation-delay: -6s; }
+.snow i:nth-child(10) { left: 85%; width: 3px; height: 3px; animation-duration: 17s; animation-delay: -8s; }
+.snow i:nth-child(11) { left: 92%; animation-duration: 12.5s; animation-delay: -2.5s; }
+.snow i:nth-child(12) { left: 97%; width: 2px; height: 2px; animation-duration: 19s; animation-delay: -10s; }
+@keyframes fall { to { transform: translate3d(-30px, 110vh, 0); opacity: .2; } }
+@media (prefers-reduced-motion: reduce) { .snow { display: none; } }
 
 /* touch layer — same arrangement as hero-lord-web */
 #zone { position: fixed; left: 0; bottom: 0; width: 50vw; height: 60vh; touch-action: none; }

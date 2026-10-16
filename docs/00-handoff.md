@@ -14,6 +14,7 @@
   - 스틱 8방향 → `UP/DOWN/LEFT/RIGHT`(대각선은 두 키 동시) 또는 `2/4/6/8`
   - 공격 `OK`(5), 스킬 `1 3 7 9`, 아이템 `0`, 교체 `#`, 지도 `*`, 메뉴 `CLR`
 - 세이브: wie가 RMS/XFile을 IndexedDB에 저장. 내보내기/가져오기는 그 저장소를 덤프/복원하는 방식으로.
+- 화면은 240×320 고정. wie는 캔버스 크기를 그대로 화면 크기로 보고하지만, 캔버스를 426×320으로 키워도 게임은 x 0~239 열에만 그린다(타이틀·메뉴 모두, 2026-10-16 확인). 폭을 넓히려면 1편처럼 엔진 쪽이 아니라 게임 클래스 패치가 필요하므로(해외판 Recomp가 그렇게 함) 하지 않는다.
 
 ## 진행 상태
 - [x] PR #1 분석 문서 + jar 언랩 도구 + 라이선스
@@ -23,6 +24,7 @@
 - 배포 상태: 2026-10-16 첫 배포 후 사용자 요청으로 **내림**(Pages 사이트 삭제, 워크플로는 수동 실행만). 로컬 테스트 끝나면 Pages를 다시 켜고(`gh api -X POST repos/LESANF/hero-lore-2-web/pages -f build_type=workflow`, 환경 `github-pages`에 `main` 브랜치 정책) `push: branches: [main]` 트리거를 복구한다. 이전 라이브 URL https://lesanf.github.io/hero-lore-2-web/ . 주의: Pages를 켤 때 `github-pages` 환경의 배포 브랜치 정책이 당시 존재하던 브랜치(docs/analysis)로 잠겨 있었음 → `main` 정책 추가로 해결
 - [x] PR #8 세이브 내보내기/가져오기 (`engine/overlay/src/ts/saves.ts`): IndexedDB `wie_filesystem`/`files`(키 `[appId, path]`, appId `0056194389`, 경로는 앞 슬래시 없이 `cf`, `g1~3`, `n1~3`)와 `wie_<appId>` 저장소를 JSON으로 덤프/복원. 아카이브의 원 세이브(n1/g1/cf)를 가져와 타이틀에 이어하기가 뜨는 것 확인
 - [x] PR #5 `.github/workflows/pages.yml`: 릴리스 `skt-pkg`의 `hero2.zip`(정리본)을 받아 빌드·배포. 1편과 같이 배포 기록은 1개만 남김
+- [x] PR #11 시작 화면(밤하늘 그라데이션·눈·로고·`시작하기` 버튼; 버튼이 오디오를 풀고, 에셋은 뒤에서 미리 받으며 진행바 표시)
 - [ ] 완주 소크 테스트(자동 플레이) 기록 → `docs/02-compat.md`
 
 ## 로컬 환경 (이 맥)
