@@ -11,7 +11,11 @@
 |---|---|---|---|
 | `cd.class` | `10 64 a4` → `10 01 a4` (bipush 100 → 1, 뒤는 if_icmple) | 핸즈온 스플래시가 1틱 뒤 자동으로 타이틀로 넘어감 | `cd.b(Graphics)`: `if (this.a > 100) a((byte)1)` |
 | `cd.class` | `10 1e a4` → `10 00 a4` (bipush 30 → 0) | 스플래시 중 키 입력이 즉시 먹음 | `cd.keyPressed`: `if (this.a <= 30) break;` |
-| `bg.class` | `10 09 b7` → `10 04 b7` (super(null, 9) → 4) | 타이틀 메뉴 9항목 → 4항목: 새로하기 · 이어하기 · 환경설정 · 도움말. 네트워크창고 · 네트워크대전 · 선물하기 · 껨존가기(모두 WAP 접속) · 게임종료 제거 | `bg.<init>`: `super(null, (byte)9)` = 항목 수, 라벨은 `com.tdf` 0..8 순서 |
+| `bg.class` | `10 09 b7` → `10 06 b7` (super(null, 9) → 6) | 타이틀 메뉴 9항목 → 6항목: 새로하기 · 이어하기 · 환경설정 · 도움말 · 네트워크창고 · 네트워크대전. 선물하기 · 껨존가기(WAP) · 게임종료 제거 | `bg.<init>`: `super(null, (byte)9)` = 항목 수, 라벨은 `com.tdf` 0..8 순서 |
+| `bg.class` | `b4 00 14 9a 00 1a` → `b4 00 14 57 00 00` (getfield a; ifne → pop; nop nop) | 네트워크창고를 고르면 세이브 유무와 상관없이 메시지 팝업 | `bg.a(int,int)` case 4: `if (!this.a) bx(…) else ca(this,4)` |
+| `bg.class` | `10 32 b6` → `10 06 b6` (bipush 50 → 6) | 그 팝업 문구 = `com.tdf` 6번 | 같은 분기, 원래 50 = "캐릭터가 없습니다." |
+| `bg.class` | tableswitch 5번 오프셋 `00 00 00 a1` → `00 00 00 73` | 네트워크대전도 같은 팝업 코드로 점프 | `bg.a(int,int)` offset 94의 tableswitch, case 4 = +115 |
+| `t/com.tdf` | 6번 레코드 "선물하기" → "준비중인 기능입니다;(LESANF)" | 위 팝업 문구. `;`는 줄바꿈 | 텍스트 테이블 형식: count u8, 레코드마다 len u16be + EUC-KR |
 
 ## 측정 (2026-10-16, 새로고침 뒤 시작하기 활성까지)
 
