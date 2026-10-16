@@ -106,7 +106,8 @@ function dialogueUp(): boolean {
 // HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom (box
 // interiors measured on 240x320: y 302..314, x 61/84/105/126 for skills 1/3/7/9, 147 for the item,
 // anchored to the bottom edge). Copy them onto the pad buttons every frame while the bar is present.
-const SLOTS: Record<string, [number, number]> = { "1": [68, 12], "3": [90, 12], "7": [111, 12], "9": [132, 12], "0": [153, 16] };
+// icon interiors only: from y = h - 17, 12 rows. Skills 12x12, item = potion + count as one 13x12 (CROSSCHECK.md)
+const SLOTS: Record<string, [number, number]> = { "1": [68, 12], "3": [90, 12], "7": [111, 12], "9": [132, 12], "0": [156, 13] };
 const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!] }));
 function hudBarUp(): boolean {
   const h = canvas.height;
@@ -121,13 +122,20 @@ function mirrorHud() {
   const up = hudBarUp();
   document.body.classList.toggle("hud", up);
   if (up) {
-    const sy = canvas.height - 18;
+    const sy = canvas.height - 17;
     for (const m of mirrors) {
-      m.ctx.drawImage(canvas, m.src[0], sy, m.src[1], 13, 0, 0, m.src[1], 13);
-      const d = m.ctx.getImageData(0, 0, m.src[1], 13).data;
+      const [sx, w] = m.src;
+      m.ctx.clearRect(0, 0, w, 12);
+      m.ctx.drawImage(canvas, sx, sy, w, 12, 0, 0, w, 12);
+      const img = m.ctx.getImageData(0, 0, w, 12), d = img.data;
       let lit = 0;
-      for (let i = 0; i < d.length; i += 4) if (d[i] + d[i + 1] + d[i + 2] > 300) lit++;   // icon pixels are bright; an empty slot only has its dark border
-      m.ctx.canvas.classList.toggle("empty", lit < 4);
+      for (let i = 0; i < d.length; i += 4) {
+        const sum = d[i] + d[i + 1] + d[i + 2];
+        if (sum === 0) d[i + 3] = 0;          // slot background is pure black, icons never are: drop the black square
+        else if (sum > 300) lit++;
+      }
+      m.ctx.putImageData(img, 0, 0);
+      m.ctx.canvas.closest(".key")!.classList.toggle("on", lit >= 4);   // slot has something registered
     }
   }
   requestAnimationFrame(mirrorHud);
@@ -233,6 +241,7 @@ const sheet = document.getElementById("save-sheet")!;
 const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
 document.getElementById("save-toggle")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
+document.getElementById("save-pad")!.onclick = () => document.getElementById("save-toggle")!.click();
 document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
 document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
 document.getElementById("save-import")!.onclick = () => file.click();
