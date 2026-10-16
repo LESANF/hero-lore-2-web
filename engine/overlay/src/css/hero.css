@@ -1,8 +1,43 @@
-html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow: hidden; touch-action: none;
+/* 영웅서기 2 web: one column everywhere — game on top, a fixed-height control pad below (gameboy style). */
+:root { --pad: 296px; }
+html, body { margin: 0; padding: 0; height: 100%; background: #060a16; overflow: hidden; touch-action: none;
   font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
-#stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-#canvas { image-rendering: pixelated; height: 100%; width: auto; max-width: 100%; aspect-ratio: 3 / 4; object-fit: contain; }
+#col { position: fixed; inset: 0; margin: 0 auto; width: var(--col, 100vw); display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top); box-sizing: border-box; }
+#stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; background: #000; }
+#canvas { image-rendering: pixelated; max-width: 100%; max-height: 100%; width: 100%; height: auto; object-fit: contain; }
 #canvas:focus { outline: none; }
+body:not(.ready) #pad { visibility: hidden; }
+
+/* control pad: 296px tall, positions from docs/04-pad-assets.md wireframe (393px wide reference).
+   Placeholder styling until the drawn assets arrive; then each button gets a background-image. */
+#pad { position: relative; flex: 0 0 var(--pad); height: var(--pad); background: #141a2c; border-top: 2px solid #3a3350;
+  padding-bottom: env(safe-area-inset-bottom); box-sizing: content-box; }
+#pad .key { position: absolute; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none;
+  -webkit-user-select: none; -webkit-touch-callout: none; border: 2px solid #c9a24a; background: #0b1326; color: #fff;
+  font: 700 14px/1 system-ui, "Apple SD Gothic Neo", sans-serif; box-shadow: 0 3px 0 #5a3f1c, 0 6px 12px rgba(0,0,0,.45); cursor: pointer; }
+#pad .key.down { transform: translateY(2px); filter: brightness(.75); box-shadow: 0 1px 0 #5a3f1c; }
+#pad .key small { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 1px 4px; border-radius: 3px;
+  background: #e8c872; color: #2a1f08; font: 700 9px/1 ui-monospace, Menlo, monospace; }
+@media (pointer: coarse) { #pad .key small { display: none; } }
+#pad .round { border-radius: 50%; }
+#pad .pill { border-radius: 999px; width: 74px; height: 30px; font-size: 12px; }
+#k-map { left: 14px; top: 10px; }
+#k-menu { right: 14px; top: 10px; }
+#pad .skill { width: 52px; height: 52px; border-color: #7fa4e8; }
+#pad .s1 { right: 145px; top: 72px; } #pad .s3 { right: 87px; top: 72px; }
+#pad .s7 { right: 145px; top: 130px; } #pad .s9 { right: 87px; top: 130px; }
+#pad .attack { right: 11px; top: 94px; width: 70px; height: 70px; font-size: 15px; border-color: #e8905a; }
+#pad .strip { position: absolute; left: 0; right: 0; top: 236px; display: flex; justify-content: center; gap: 8px; }
+#pad .strip .key { position: relative; width: 76px; }
+#pad .strip .key[data-key="0"] { border-color: #7fd38a; }
+/* d-pad: one element, direction from the finger's position so the thumb can slide between arms */
+#dpad { position: absolute; left: 22px; top: 66px; width: 150px; height: 150px; touch-action: none; user-select: none; -webkit-user-select: none; }
+#dpad .arm, #dpad .hub { position: absolute; width: 50px; height: 50px; box-sizing: border-box; border: 2px solid #c9a24a; background: #0b1326;
+  color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; pointer-events: none; }
+#dpad .up { left: 50px; top: 0; } #dpad .left { left: 0; top: 50px; } #dpad .right { left: 100px; top: 50px; } #dpad .down { left: 50px; top: 100px; }
+#dpad .hub { left: 50px; top: 50px; background: #1a2140; }
+#dpad .arm.on { background: #c9a24a; color: #2a1f08; }
 
 /* landing: full-bleed night sky, falling snow, logo, one button; the progress bar shows while the engine downloads */
 #landing { position: fixed; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px;
@@ -38,65 +73,6 @@ html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow:
 @keyframes fall { to { transform: translate3d(-30px, 110vh, 0); opacity: .2; } }
 @media (prefers-reduced-motion: reduce) { .snow { display: none; } }
 
-/* touch layer: floating stick lower-left, glass buttons right. Game HUD (HP/skills) is at the
-   bottom of the game image, so on phones the controls live in the band below it, not over it. */
-#zone { position: fixed; left: 0; bottom: 0; width: 50vw; height: 60vh; touch-action: none; }
-#stick { position: fixed; width: 0; height: 0; pointer-events: none; display: none; }
-#stick.show { display: block; }
-#stick .ring { position: absolute; left: 0; top: 0; width: 150px; height: 150px; transform: translate(-50%, -50%); border-radius: 50%;
-  background: rgba(255,255,255,.10); border: 1.5px solid rgba(255,255,255,.55); box-shadow: 0 2px 10px rgba(0,0,0,.35); }
-#stick .knob { position: absolute; left: 0; top: 0; width: 56px; height: 56px; transform: translate(-50%, -50%); border-radius: 50%;
-  background: rgba(255,255,255,.9); box-shadow: 0 2px 8px rgba(0,0,0,.4); }
-#stick .hint { position: absolute; left: 0; top: -96px; transform: translateX(-50%); font: 600 11px/1 system-ui; color: #fff; text-shadow: 0 1px 2px #000; }
-#hud { position: fixed; inset: 0; pointer-events: none; }
-body:not(.ready) #hud, body:not(.ready) #zone { display: none; }   /* controls appear with the game */
-#hud button { pointer-events: auto; position: absolute; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
-  border: 1.5px solid rgba(255,255,255,.38); background: rgba(16,22,40,.55); color: #fff; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  font: 700 14px/1 system-ui, "Apple SD Gothic Neo", sans-serif; letter-spacing: .02em; text-shadow: 0 1px 2px rgba(0,0,0,.6);
-  box-shadow: 0 4px 14px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18); cursor: pointer; transition: background .08s, transform .08s; }
-#hud button.down { background: rgba(255,255,255,.88); color: #15203a; text-shadow: none; transform: scale(.94); }
-#hud button small { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); padding: 1px 5px; border-radius: 4px;
-  background: rgba(16,22,40,.8); border: 1px solid rgba(255,255,255,.3); color: #fff; font: 600 9px/1 ui-monospace, Menlo, monospace; white-space: nowrap; }
-@media (pointer: coarse) { #hud button small, #stick .hint { display: none; } }   /* key hints only mean something with a keyboard */
-#hud .key { right: 12px; width: 76px; height: 40px; border-radius: 999px; font-size: 13px; }
-#hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 18px); }
-#hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 70px); }
-#hud .round { border-radius: 50%; }
-#hud .big { right: 18px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 104px; height: 104px; font-size: 17px; border-color: rgba(255,170,150,.6); }
-#hud .s1 { right: 136px; bottom: calc(env(safe-area-inset-bottom) + 90px); width: 56px; height: 56px; }
-#hud .s3 { right: 136px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 56px; height: 56px; }
-#hud .s7 { right: 200px; bottom: calc(env(safe-area-inset-bottom) + 90px); width: 56px; height: 56px; }
-#hud .s9 { right: 200px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 56px; height: 56px; }
-#hud .item { right: 26px; bottom: calc(env(safe-area-inset-bottom) + 142px); width: 56px; height: 56px; }
-#hud .swap { right: 92px; bottom: calc(env(safe-area-inset-bottom) + 154px); width: 46px; height: 46px; font-size: 12px; }
-
-/* portrait phone: the game takes the full width at the top; the controls get whatever is left below.
-   --band never drops under 200px, so on short phones the game shrinks a little instead. */
-@media (orientation: portrait) {
-  :root { --band: clamp(200px, calc(100dvh - env(safe-area-inset-top) - 100vw * 4 / 3), 340px); }
-  #stage { align-items: flex-start; box-sizing: border-box; padding: env(safe-area-inset-top) 0 var(--band); }
-  #canvas { height: 100%; width: auto; max-width: 100%; }
-  #zone { height: max(60vh, var(--band)); }
-  #hud .key[data-key] { top: auto; bottom: calc(env(safe-area-inset-bottom) + var(--band) - 52px); width: 64px; height: 34px; font-size: 12px; }
-  #hud .key[data-key="CLR"] { left: 14px; right: auto; }
-  #hud .key[data-key="*"] { left: 86px; right: auto; }
-  #hud .big { width: 96px; height: 96px; bottom: calc(env(safe-area-inset-bottom) + 20px); }
-  #hud .s1 { right: 126px; bottom: calc(env(safe-area-inset-bottom) + 84px); width: 54px; height: 54px; }
-  #hud .s3 { right: 126px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 54px; height: 54px; }
-  #hud .s7 { right: 188px; bottom: calc(env(safe-area-inset-bottom) + 84px); width: 54px; height: 54px; }
-  #hud .s9 { right: 188px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 54px; height: 54px; }
-  #hud .item { right: 24px; bottom: calc(env(safe-area-inset-bottom) + 130px); width: 52px; height: 52px; }
-  #hud .swap { right: 86px; bottom: calc(env(safe-area-inset-bottom) + 140px); width: 44px; height: 44px; }
-}
-
-/* experiment: emulated screen matches the viewport, controls sit over the game */
-body.fill { --band: 0px; }
-body.fill #stage { padding: 0; }
-body.fill #canvas { height: 100%; width: auto; max-width: 100%; }
-body.fill #hud .key[data-key] { bottom: auto; top: calc(env(safe-area-inset-top) + 12px); left: auto; }
-body.fill #hud .key[data-key="CLR"] { right: 12px; }
-body.fill #hud .key[data-key="*"] { right: 86px; }
-body.fill #hud .big, body.fill #hud .s1, body.fill #hud .s3, body.fill #hud .s7, body.fill #hud .s9, body.fill #hud .item, body.fill #hud .swap { margin-bottom: 44px; }
 
 /* save sheet */
 #save-toggle { position: fixed; top: calc(env(safe-area-inset-top) + 10px); left: 12px; z-index: 6; padding: 6px 12px; border-radius: 999px;

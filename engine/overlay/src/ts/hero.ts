@@ -11,9 +11,9 @@ const GAME_URL = new URLSearchParams(location.search).get("pkg") ?? "game/hero2.
 // Keypad codes the game reads (docs/01-analysis.md). Same hand positions as hero-lord-web.
 const KEY_MAP: Record<string, string> = {
   KeyW: "2", ArrowUp: "2", KeyA: "4", ArrowLeft: "4", KeyD: "6", ArrowRight: "6", KeyS: "8", ArrowDown: "8",
-  Space: "5", Enter: "5", NumpadEnter: "5",
-  Digit1: "1", Digit3: "3", Digit7: "7", Digit9: "9",
-  KeyQ: "0", KeyE: "#", KeyM: "*",
+  Space: "5", Enter: "5", NumpadEnter: "5", KeyL: "5",
+  KeyU: "1", KeyI: "3", KeyJ: "7", KeyK: "9", Digit1: "1", Digit3: "3", Digit7: "7", Digit9: "9",
+  KeyO: "0", KeyP: "#", Semicolon: "*", KeyM: "*",
   Escape: "CLR", Backspace: "CLR",
 };
 
@@ -93,9 +93,21 @@ async function boot() {
   fill.style.width = "85%";
   setMasterVolume(0.5);
   setPcmVolume(0.5);
-  // Experiment: `?w=&h=` sets the emulated screen size (wie's XDisplay now reports the canvas size).
+  // Layout: one column, control pad of fixed height below, game above. The column is as wide as the
+  // viewport (max 480) unless the area above the pad could not hold a 240x320 game at that scale; the
+  // emulated height then fills whatever is left above the pad (320..400). Read once: the game reads
+  // XDisplay once at boot. `?w=&h=` still overrides for tests.
+  const PAD = 296, MAXW = 480;
+  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+  const area = vh - PAD;
+  const col = Math.floor(Math.min(vw, MAXW, area * 240 / 320));
   const q = new URLSearchParams(location.search);
-  if (q.get("w")) { canvas.dataset.w = q.get("w")!; canvas.dataset.h = q.get("h")!; canvas.style.aspectRatio = `${q.get("w")} / ${q.get("h")}`; document.body.classList.add("fill"); }
+  let w = Number(q.get("w")), h = Number(q.get("h"));
+  if (!(w > 0 && h > 0)) { w = 240; h = Math.min(400, Math.max(320, Math.round(area / (col / 240) / 2) * 2)); }
+  document.documentElement.style.setProperty("--col", `${col}px`);
+  canvas.dataset.w = String(w); canvas.dataset.h = String(h);
+  canvas.style.aspectRatio = `${w} / ${h}`;
+  console.log(`hero-lore-2-web: screen ${w}x${h}, column ${col}px, viewport ${vw}x${vh}`);
   const ready = new Promise<void>((resolve) => {
     session = startWasmSession("hero2.zip", game, font, (event: SessionEvent) => {
       if (event.type === "ready") resolve();
@@ -104,7 +116,7 @@ async function boot() {
     });
   });
   await ready;
-  mountInput(session!, document.getElementById("hud")!, document.getElementById("zone")!, document.getElementById("stick")!);
+  mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!);
   // ponytail: tap OK every 400 ms until the menu shows; give up after 20 s and show whatever is there
   const until = Date.now() + 20_000;
   while (!menuUp() && Date.now() < until) {
