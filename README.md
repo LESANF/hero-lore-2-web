@@ -1,31 +1,69 @@
-# 영웅서기 2: 빙해의 검사 — 브라우저 포팅 (작업 중)
+# hero-lore-2-web
 
-> 원작 **영웅서기 2: 빙해의 검사** (Heroes Lore: Knight of Frozen Sea, 2007)는
-> **핸즈온모바일코리아**(구 엠포마코리아)가 만들고 SKT·KTF·LGT 피처폰으로 서비스된 게임입니다.
-> 권리는 이후 인수한 EA에 있습니다. 이 저장소는 원작 게임의 코드와 에셋을 한 줄도 다시 그리지 않고,
-> **SKT 자바판 원본을 그대로 브라우저에서 실행**하는 보존용 포팅입니다.
-> 실행 코어는 dlunch의 WIPI/SKVM 에뮬레이터 [wie](https://github.com/dlunch/wie) (MIT)입니다.
+## This game was made by Hands-On Mobile Korea
 
-## 목표
+> **영웅서기 2: 빙해의 검사 (Heroes Lore: Knight of Frozen Sea, 2007) was developed by Hands-On Mobile Korea
+> (formerly mforma Korea), later part of EA Mobile.** This repository is only the tooling that runs the
+> shipped mobile build in a web browser. Nothing of the game (graphics, sound, script, data, design) was
+> created or changed here.
 
-[영웅서기 1 웹판](https://github.com/LESANF/hero-lord-web)과 같은 경험으로 2편을 브라우저에서 바로 플레이.
+- Live: https://lesanf.github.io/hero-lore-2-web/ (GitHub Pages, rebuilt from `main` by Actions; only the latest deployment is ever served)
+- Part 1 in the browser: [hero-lord-web](https://github.com/LESANF/hero-lord-web)
 
-- 원작 그대로: SKT판 `.jar`(자바 바이트코드 97개 클래스 + 에셋)를 wie 코어로 실행. 맵 111개·엔딩 텍스트 전부 내장, 네트워크 기능 없이 엔딩까지 가능(`docs/01-analysis.md`).
-- 조작·화면은 1편 웹판과 동일: 떠다니는 8방향 조이스틱, 공격·스킬·아이템 원형 버튼, 키보드(WASD/Space/1·3·7·9/Q/Esc), 자동 저장, 세이브 내보내기/가져오기, 아이폰 터치 보정.
-- 피처폰 키패드(2·4·6·8 이동, 5 공격, 1·3·7·9 스킬, 0 아이템, # 교체, * 지도, CLR 메뉴)는 우리 입력층이 대신 눌러 줍니다.
+## How it works
 
-## 구성 (예정)
+The 2007 release is a Java ME application for Korean feature phones. It is run unmodified on
+[wie](https://github.com/dlunch/wie) (MIT), an open-source emulator for those phones that compiles to
+WebAssembly. This repository adds the page around it: the loading screen, a touch layer with a floating
+stick and round buttons laid out like hero-lord-web, keyboard bindings, and the build/deploy pipeline.
 
-| 경로 | 역할 |
-|---|---|
-| `docs/` | 원본 분석, 호환성 검증 기록 |
-| `tools/` | SKT 패키지 풀기(`unwrap_skt_jar.py`), 인벤토리 |
-| `engine/` | wie를 고정 커밋으로 받아 wasm 코어를 빌드하는 스크립트 |
-| `web/` | 페이지, 조이스틱·HUD 입력층, 세이브 도구 |
+```
+game package ─▶ wie core (Rust → wasm, pinned commit) ─▶ canvas 240×320
+                        + engine/overlay/ (our page, input layer, styles)   ─▶ static site
+```
 
-## 크레딧
+| step | file | notes |
+|---|---|---|
+| analysis | `docs/01-analysis.md` | what is in the package, which keys the game reads, what blocks nothing |
+| package | `tools/clean_package.py` | keeps the four application files, drops stray user data |
+| core | `engine/build.sh`, `engine/WIE_COMMIT` | shallow-fetches wie at one commit, runs `wasm-pack` + webpack |
+| page | `engine/overlay/src/{html,ts,css}` | `hero.ts` loads package and font and starts the session; `input.ts` is the touch layer |
+| deploy | `.github/workflows/pages.yml` | downloads the package from the `skt-pkg` release, builds, publishes `build/web` |
 
-- 원작: 핸즈온모바일코리아 (엠포마코리아) · 퍼블리싱 SK텔레콤 외 · 현재 권리 EA
-- 에뮬레이터 코어: [wie](https://github.com/dlunch/wie) by dlunch (MIT)
-- 참고: [Heroes Lore 2 Recomp](https://github.com/davidkalil10/Heroes-Lore-2-The-Knight-of-Frozen_Sea-Recomp) (해외 J2ME판 네이티브 리컴파일)
-- 1편 웹판: [hero-lord-web](https://github.com/LESANF/hero-lord-web)
+Single-threaded wasm, so no COOP/COEP headers are needed and any static host works. The only edit to wie
+is one URL made relative so the bundle works under a sub-path.
+
+## Controls
+
+The game is keypad-driven. The page maps a stick and buttons onto those keys, the same arrangement as
+hero-lord-web; keyboard works on desktop.
+
+| action | touch | keys |
+|---|---|---|
+| move | floating stick (lower-left area) | W A S D, arrows |
+| attack / confirm | 공격 | Space, Enter |
+| skill slots | 스킬 1 · 3 · 7 · 9 | 1, 3, 7, 9 |
+| item | 아이템 | Q |
+| cycle item | 교체 | E |
+| map | 지도 | M |
+| menu / back | 메뉴 | Esc, Backspace |
+
+## Saves
+
+The game saves into the browser (IndexedDB, per site). Export/import tools are on the list in
+`docs/00-handoff.md`.
+
+## Build
+
+```
+GAME=path/to/hero2.zip sh engine/build.sh      # needs node 20+, rust stable, wasm32 target, wasm-pack
+cd build/web && python3 -m http.server 8791
+```
+
+`docs/00-handoff.md` tracks status and decisions so work can resume from any machine.
+
+## Credits
+
+- Game: Hands-On Mobile Korea / mforma Korea (rights now with EA). Taken down on request.
+- Emulator core: [wie](https://github.com/dlunch/wie) by dlunch, MIT.
+- Reference: [Heroes Lore 2 Recomp](https://github.com/davidkalil10/Heroes-Lore-2-The-Knight-of-Frozen_Sea-Recomp).
