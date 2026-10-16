@@ -12,3 +12,40 @@ html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow:
 #fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #ffd56b, #fff4c2 60%, #fff); transition: width .15s linear; }
 #status small { font-size: 13px; letter-spacing: .06em; opacity: .8; min-height: 1.2em; }
 #status pre { margin: 0; white-space: pre-wrap; color: #ffb3b3; font-size: 13px; }
+
+/* touch layer — same arrangement as hero-lord-web */
+#zone { position: fixed; left: 0; bottom: 0; width: 50vw; height: 60vh; touch-action: none; }
+#stick { position: fixed; width: 0; height: 0; pointer-events: none; display: none; }
+#stick.show { display: block; }
+#stick .ring { position: absolute; left: 0; top: 0; width: 150px; height: 150px; transform: translate(-50%, -50%); border-radius: 50%;
+  background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.75); box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+#stick .knob { position: absolute; left: 0; top: 0; width: 56px; height: 56px; transform: translate(-50%, -50%); border-radius: 50%;
+  background: rgba(255,255,255,.92); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+#stick .hint { position: absolute; left: 0; top: -96px; transform: translateX(-50%); font: 600 11px/1 system-ui; color: #fff; text-shadow: 0 1px 2px #000; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud button { pointer-events: auto; position: absolute; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  border: 2px solid #2b4a8a; background: rgba(255,255,255,.88); color: #1b2a4a; font: 700 15px/1 system-ui, "Apple SD Gothic Neo", sans-serif;
+  box-shadow: 0 3px 0 #1b2a4a; cursor: pointer; }
+#hud button.down { background: #2b63d9; color: #fff; transform: translateY(2px); box-shadow: 0 1px 0 #1b2a4a; }
+#hud button small { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); padding: 1px 5px; border-radius: 4px;
+  background: #eef2ff; border: 1px solid #2b4a8a; color: #1b2a4a; font: 600 9px/1 ui-monospace, Menlo, monospace; white-space: nowrap; }
+#hud .key { right: 12px; width: 84px; height: 46px; border-radius: 8px; }
+#hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 18px); }
+#hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 80px); }
+#hud .round { border-radius: 50%; }
+#hud .big { right: 18px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 112px; height: 112px; font-size: 18px; }
+#hud .s1 { right: 140px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 58px; height: 58px; }
+#hud .s3 { right: 140px; bottom: calc(env(safe-area-inset-bottom) + 92px); width: 58px; height: 58px; }
+#hud .s7 { right: 206px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 58px; height: 58px; }
+#hud .s9 { right: 206px; bottom: calc(env(safe-area-inset-bottom) + 92px); width: 58px; height: 58px; }
+#hud .item { right: 24px; bottom: calc(env(safe-area-inset-bottom) + 150px); width: 58px; height: 58px; }
+#hud .swap { right: 92px; bottom: calc(env(safe-area-inset-bottom) + 160px); width: 44px; height: 44px; font-size: 13px; }
+@media (pointer: fine) and (min-width: 900px) { #stick .hint { display: none; } }
+
+/* portrait phone: game on top, controls in the band below it (nothing overlaps the game's HP bar) */
+@media (orientation: portrait) {
+  #stage { align-items: flex-start; padding-top: calc(env(safe-area-inset-top) + 72px); box-sizing: border-box; }
+  #canvas { width: 100%; height: auto; max-height: calc(100% - 72px); }
+  #hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 16px); right: 12px; }
+  #hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 16px); right: 104px; }
+}
