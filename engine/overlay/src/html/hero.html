@@ -23,13 +23,13 @@
       <span class="arm up" data-dir="2">▲</span><span class="arm left" data-dir="4">◀</span>
       <span class="arm right" data-dir="6">▶</span><span class="arm down" data-dir="8">▼</span><span class="hub"></span>
     </div>
-    <button class="key round skill s1" data-key="1"><small>U</small>1</button>
-    <button class="key round skill s3" data-key="3"><small>I</small>3</button>
-    <button class="key round skill s7" data-key="7"><small>J</small>7</button>
-    <button class="key round skill s9" data-key="9"><small>K</small>9</button>
+    <button class="key round skill s1" data-key="1"><small>U</small><canvas class="mirror" data-slot="1" width="19" height="13"></canvas><b>1</b></button>
+    <button class="key round skill s3" data-key="3"><small>I</small><canvas class="mirror" data-slot="3" width="17" height="13"></canvas><b>3</b></button>
+    <button class="key round skill s7" data-key="7"><small>J</small><canvas class="mirror" data-slot="7" width="17" height="13"></canvas><b>7</b></button>
+    <button class="key round skill s9" data-key="9"><small>K</small><canvas class="mirror" data-slot="9" width="17" height="13"></canvas><b>9</b></button>
     <button class="key round attack" data-key="5"><small>SPACE</small>공격</button>
     <div class="strip">
-      <button class="key pill" data-key="0"><small>O</small>회복</button>
+      <button class="key pill" data-key="0" id="k-heal"><small>O</small><canvas class="mirror" data-slot="0" width="22" height="13"></canvas>회복</button>
       <button class="key pill" data-key="#" id="k-hash"><small>P</small><span class="swap">교체</span><span class="skip">스킵</span></button>
     </div>
   </div>

@@ -101,6 +101,30 @@ function dialogueUp(): boolean {
   return false;
 }
 
+// HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom (box
+// interiors measured on 240x320: y 302..314, x 61/84/105/126 for skills 1/3/7/9, 147 for the item,
+// anchored to the bottom edge). Copy them onto the pad buttons every frame while the bar is present.
+const SLOTS: Record<string, [number, number]> = { "1": [62, 19], "3": [85, 17], "7": [106, 17], "9": [127, 17], "0": [148, 22] };
+const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d")!, src: SLOTS[m.dataset.slot!] }));
+function hudBarUp(): boolean {
+  const h = canvas.height;
+  probe.width = 2; probe.height = 1;
+  probeCtx.drawImage(canvas, 60, h - 19, 1, 1, 0, 0, 1, 1);
+  probeCtx.drawImage(canvas, 146, h - 19, 1, 1, 1, 0, 1, 1);
+  const d = probeCtx.getImageData(0, 0, 2, 1).data;
+  const gold = (i: number) => d[i] > 130 && d[i + 1] > 100 && d[i + 2] < 110;
+  return gold(0) && gold(4);
+}
+function mirrorHud() {
+  const up = hudBarUp();
+  document.body.classList.toggle("hud", up);
+  if (up) {
+    const sy = canvas.height - 18;
+    for (const m of mirrors) m.ctx.drawImage(canvas, m.src[0], sy, m.src[1], 13, 0, 0, m.src[1], 13);
+  }
+  requestAnimationFrame(mirrorHud);
+}
+
 let session: WasmSession | undefined;
 let started = false;
 const KEY_CLICK = (key: string, down: boolean) => { if (started) void session?.key(key, down).catch(fail); };
@@ -154,6 +178,7 @@ function start() {
   setTimeout(() => landing.remove(), 700);
   canvas.focus();
   setInterval(() => document.body.classList.toggle("dialogue", dialogueUp()), 250);
+  requestAnimationFrame(mirrorHud);
 }
 
 const held = new Set<string>();
