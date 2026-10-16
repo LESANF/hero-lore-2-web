@@ -17,7 +17,9 @@ const KEY_MAP: Record<string, string> = {
   Escape: "CLR", Backspace: "CLR",
 };
 
+declare const __APP_VERSION__: string;
 const landing = document.getElementById("landing")!;
+document.getElementById("ver")!.textContent = __APP_VERSION__;
 const startButton = document.getElementById("start") as HTMLButtonElement;
 const fill = document.getElementById("fill") as HTMLDivElement;
 const detail = document.getElementById("detail")!;
@@ -137,8 +139,10 @@ const KEY_CLICK = (key: string, down: boolean) => { if (started) void session?.k
 
 async function boot() {
   startButton.disabled = true;
+  const t0 = performance.now();
   const [game, font] = await assets;
-  fill.style.width = "85%";
+  fill.style.width = "85%"; detail.textContent = "엔진 시작 중";
+  console.log(`boot: assets ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   setMasterVolume(0.5);
   setPcmVolume(0.5);
   // Layout (docs/04-pad-assets.md): one column, game at native 240x320 scaled to the column width,
@@ -157,11 +161,17 @@ async function boot() {
   const q = new URLSearchParams(location.search);
   let w = Number(q.get("w")), h = Number(q.get("h"));
   if (!(w > 0 && h > 0)) { w = 240; h = 320; }
-  document.documentElement.style.setProperty("--col", `${col}px`);
-  document.documentElement.style.setProperty("--ps", String(Math.min(1.1, col / 393)));
+  const gameH = Math.round(col * 320 / 240);
+  const padH = Math.max(0, vh - sat - sab - gameH);
+  const ps = Math.min(1.1, col / 393, padH / 304);
+  const ex = Math.min(140, Math.max(0, padH / ps - 304));          // spread the rows over extra height, up to a point
+  const padTop = Math.max(0, (padH - (304 + ex) * ps) / 2);         // then centre the block in what is left
+  const root = document.documentElement.style;
+  root.setProperty("--col", `${col}px`); root.setProperty("--ps", String(ps));
+  root.setProperty("--ex", `${ex.toFixed(1)}px`); root.setProperty("--pad-top", `${padTop.toFixed(1)}px`);
   canvas.dataset.w = String(w); canvas.dataset.h = String(h);
   canvas.style.aspectRatio = `${w} / ${h}`;
-  console.log(`hero-lore-2-web: screen ${w}x${h}, column ${col}px, viewport ${vw}x${vh}`);
+  console.log(`hero-lore-2-web ${__APP_VERSION__}: screen ${w}x${h}, column ${col}px, pad ${padH}px x${ps.toFixed(2)} ex ${ex.toFixed(0)}, viewport ${vw}x${vh}`);
   const ready = new Promise<void>((resolve) => {
     session = startWasmSession("hero2.zip", game, font, (event: SessionEvent) => {
       if (event.type === "ready") resolve();
@@ -170,15 +180,19 @@ async function boot() {
     });
   });
   await ready;
+  fill.style.width = "92%"; detail.textContent = "인트로 건너뛰는 중";
+  console.log(`boot: engine ready ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!);
-  // ponytail: tap OK every 400 ms until the menu shows; give up after 20 s and show whatever is there
+  // ponytail: tap OK every 250 ms until the menu shows; give up after 20 s and show whatever is there.
+  // The publisher splash ignores keys for its first 30 ticks (cd.java), so ~3 s of this is the game itself.
   const until = Date.now() + 20_000;
   while (!menuUp() && Date.now() < until) {
     await session!.key("5", true); await sleep(80); await session!.key("5", false);
-    await sleep(400);
+    await sleep(250);
   }
   fill.style.width = "100%";
   detail.textContent = "";
+  console.log(`boot: menu ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   startButton.disabled = false;
 }
 

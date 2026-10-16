@@ -6,6 +6,7 @@ set -eu
 cd "$(dirname "$0")/.."
 export PATH="$HOME/.cargo/bin:$PATH"
 COMMIT=$(cat engine/WIE_COMMIT)
+export HERO_VERSION="v$(cat VERSION)+$(git rev-parse --short HEAD 2>/dev/null || echo local)"   # shown on the landing
 
 mkdir -p build
 if [ ! -d build/wie/.git ]; then

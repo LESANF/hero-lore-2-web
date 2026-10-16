@@ -14,7 +14,9 @@ body:not(.ready) #pad { visibility: hidden; }
    whatever height is left under the game, with the home-indicator safe area kept empty. */
 #pad { position: relative; flex: 1 0 auto; min-height: 0; height: 0; background: #0d1020 url(../assets/pad/pad-tile.png) repeat; background-size: 128px 128px;
   padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; overflow: hidden; }
-#pad-inner { position: absolute; left: 50%; top: 0; width: 393px; height: 304px; transform: translateX(-50%) scale(var(--ps, 1)); transform-origin: top center; }
+/* --ex: extra design-px of height when the pad is taller than the 393x304 grid; rows spread out and the
+   whole block is centred vertically (--pad-top), so a tall window does not leave everything stuck at the top */
+#pad-inner { position: absolute; left: 50%; top: var(--pad-top, 0px); width: 393px; height: calc(304px + var(--ex, 0px)); transform: translateX(-50%) scale(var(--ps, 1)); transform-origin: top center; }
 #pad .divider { position: absolute; left: 0; top: 0; width: 393px; height: 20px; background: url(../assets/pad/pad-divider.png) center / 100% 100% no-repeat; }
 #pad .key { position: absolute; padding: 0; border: 0; background: transparent center / 100% 100% no-repeat; touch-action: none; user-select: none;
   -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
@@ -24,19 +26,19 @@ body:not(.ready) #pad { visibility: hidden; }
 @media (pointer: coarse) { #pad .key small, #dpad small { display: none; } }   /* key hints only mean something with a keyboard */
 #pad .pill { width: 96px; height: 40px; background-image: url(../assets/pad/pill.png); }
 #pad .pill::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 32px; transform: translate(-50%, -50%); background: center / contain no-repeat; }
-#pad .map { left: 12px; top: 26px; } #pad .map::after { background-image: url(../assets/pad/ico-map.png); }
-#pad .menu { right: 12px; top: 26px; } #pad .menu::after { background-image: url(../assets/pad/ico-menu.png); }
-#pad .potion { left: 92px; top: 260px; } #pad .potion::after { background-image: url(../assets/pad/ico-potion.png); }
-#pad .swap { left: 205px; top: 260px; } #pad .swap::after { background-image: url(../assets/pad/ico-swap.png); }
+#pad .map { left: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .map::after { background-image: url(../assets/pad/ico-map.png); }
+#pad .menu { right: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .menu::after { background-image: url(../assets/pad/ico-menu.png); }
+#pad .potion { left: 92px; top: calc(260px + var(--ex, 0px) * .8); } #pad .potion::after { background-image: url(../assets/pad/ico-potion.png); }
+#pad .swap { left: 205px; top: calc(260px + var(--ex, 0px) * .8); } #pad .swap::after { background-image: url(../assets/pad/ico-swap.png); }
 #pad .skill { width: 58px; height: 58px; }
-#pad .s1 { left: 174px; top: 108px; background-image: url(../assets/pad/btn-skill-1.png); }
-#pad .s3 { left: 236px; top: 108px; background-image: url(../assets/pad/btn-skill-3.png); }
-#pad .s7 { left: 174px; top: 172px; background-image: url(../assets/pad/btn-skill-7.png); }
-#pad .s9 { left: 236px; top: 172px; background-image: url(../assets/pad/btn-skill-9.png); }
-#pad .attack { left: 300px; top: 125px; width: 88px; height: 88px; background-image: url(../assets/pad/btn-attack.png); }
+#pad .s1 { left: 174px; top: calc(108px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-1.png); }
+#pad .s3 { left: 236px; top: calc(108px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-3.png); }
+#pad .s7 { left: 174px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-7.png); }
+#pad .s9 { left: 236px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-9.png); }
+#pad .attack { left: 300px; top: calc(125px + var(--ex, 0px) * .5); width: 88px; height: 88px; background-image: url(../assets/pad/btn-attack.png); }
 #pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); filter: none; transform: none; }
 /* d-pad: one image; .arm spans are hit/highlight overlays, direction comes from the finger position */
-#dpad { position: absolute; left: 19px; top: 96px; width: 146px; height: 146px; background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
+#dpad { position: absolute; left: 19px; top: calc(96px + var(--ex, 0px) * .5); width: 146px; height: 146px; background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
   touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
 #dpad .arm { position: absolute; width: 46px; height: 46px; border-radius: 8px; pointer-events: none; }
 #dpad .up { left: 50px; top: 4px; } #dpad .left { left: 4px; top: 50px; } #dpad .right { left: 96px; top: 50px; } #dpad .down { left: 50px; top: 96px; }
@@ -72,6 +74,7 @@ body.menu #pad .potion, body.menu #pad .map, body.menu #pad .swap, body.dialogue
 #fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #9cc4ff, #e8f1ff 60%, #fff); transition: width .15s linear; }
 #landing small { font-size: 12px; letter-spacing: .06em; opacity: .75; min-height: 1.2em; }
 #landing pre { margin: 0; white-space: pre-wrap; color: #ffb3b3; font-size: 13px; }
+#ver { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 12px); text-align: center; font: 500 11px/1 ui-monospace, Menlo, monospace; color: rgba(255,255,255,.45); }
 .snow { position: absolute; inset: 0; pointer-events: none; }
 .snow i { position: absolute; top: -6px; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.85); filter: blur(.3px);
   animation: fall linear infinite; }
