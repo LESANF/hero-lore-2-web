@@ -20,7 +20,7 @@
 - [x] PR #3 `engine/build.sh`: wie 고정 커밋(`engine/WIE_COMMIT`) + 오버레이(`engine/overlay/`) → `build/web/` (wasm 18 MB, 사운드폰트 1 MB). 로컬: `GAME=<영웅서기2.zip> sh engine/build.sh` 후 `cd build/web && python3 -m http.server 8791` → 타이틀·새 게임까지 키보드로 확인(2026-10-16)
 - [x] PR #4 입력층 `engine/overlay/src/ts/input.ts`(스틱·버튼) + 세로 폰 배치. 폰 세로 에뮬로 확인
 - [x] PR #7 로딩 화면(타이틀 캡처 로고 + 그라데이션 배경, 준비되면 HUD 표시). 원본 로고는 `img/logo.mph/.mpd` 자체 포맷이라 디코딩은 나중에
-- 라이브: https://lesanf.github.io/hero-lore-2-web/ (2026-10-16 첫 배포). 주의: Pages를 켤 때 `github-pages` 환경의 배포 브랜치 정책이 당시 존재하던 브랜치(docs/analysis)로 잠겨 있었음 → `main` 정책 추가로 해결
+- 배포 상태: 2026-10-16 첫 배포 후 사용자 요청으로 **내림**(Pages 사이트 삭제, 워크플로는 수동 실행만). 로컬 테스트 끝나면 Pages를 다시 켜고(`gh api -X POST repos/LESANF/hero-lore-2-web/pages -f build_type=workflow`, 환경 `github-pages`에 `main` 브랜치 정책) `push: branches: [main]` 트리거를 복구한다. 이전 라이브 URL https://lesanf.github.io/hero-lore-2-web/ . 주의: Pages를 켤 때 `github-pages` 환경의 배포 브랜치 정책이 당시 존재하던 브랜치(docs/analysis)로 잠겨 있었음 → `main` 정책 추가로 해결
 - [x] PR #8 세이브 내보내기/가져오기 (`engine/overlay/src/ts/saves.ts`): IndexedDB `wie_filesystem`/`files`(키 `[appId, path]`, appId `0056194389`, 경로는 앞 슬래시 없이 `cf`, `g1~3`, `n1~3`)와 `wie_<appId>` 저장소를 JSON으로 덤프/복원. 아카이브의 원 세이브(n1/g1/cf)를 가져와 타이틀에 이어하기가 뜨는 것 확인
 - [x] PR #5 `.github/workflows/pages.yml`: 릴리스 `skt-pkg`의 `hero2.zip`(정리본)을 받아 빌드·배포. 1편과 같이 배포 기록은 1개만 남김
 - [ ] 완주 소크 테스트(자동 플레이) 기록 → `docs/02-compat.md`
