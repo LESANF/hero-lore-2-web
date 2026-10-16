@@ -3,7 +3,7 @@
 import { startWasmSession, type WasmSession } from "./backend/wasm";
 import type { SessionEvent } from "./backend";
 import { audioReady, setMasterVolume, setPcmVolume } from "./midi";
-import { mountInput } from "./input";
+import { createDirections, mountInput, type Directions } from "./input";
 import { exportSaves, importSaves } from "./saves";
 
 const GAME_URL = new URLSearchParams(location.search).get("pkg") ?? "game/hero2.zip";
@@ -142,8 +142,13 @@ function mirrorHud() {
 }
 
 let session: WasmSession | undefined;
+let dirs: Directions | undefined;
 let started = false;
-const KEY_CLICK = (key: string, down: boolean) => { if (started) void session?.key(key, down).catch(fail); };
+const KEY_CLICK = (key: string, down: boolean) => {
+  if (!started) return;
+  if (dirs?.isDir(key)) { if (down) dirs.down(key); else dirs.up(key); return; }   // directions go through the arbiter
+  void session?.key(key, down).catch(fail);
+};
 
 async function boot() {
   startButton.disabled = true;
@@ -190,7 +195,8 @@ async function boot() {
   await ready;
   fill.style.width = "92%"; detail.textContent = "인트로 건너뛰는 중";
   console.log(`boot: engine ready ${((performance.now() - t0) / 1000).toFixed(1)}s`);
-  mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!);
+  dirs = createDirections(session!);
+  mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!, dirs);
   // ponytail: tap OK every 250 ms until the menu shows; give up after 20 s and show whatever is there.
   // The publisher splash ignores keys for its first 30 ticks (cd.java), so ~3 s of this is the game itself.
   const until = Date.now() + 20_000;
@@ -234,7 +240,7 @@ window.addEventListener("keyup", (e) => {
   e.preventDefault();
   if (held.delete(key)) KEY_CLICK(key, false);
 });
-window.addEventListener("blur", () => { held.clear(); void session?.releaseKeys(); });
+window.addEventListener("blur", () => { held.clear(); dirs?.clear(); void session?.releaseKeys(); });
 
 // save sheet
 const sheet = document.getElementById("save-sheet")!;

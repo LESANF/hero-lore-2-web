@@ -3,7 +3,37 @@
 // Pointer events, so several fingers can hold keys at once.
 import type { PlayerSession } from "./backend";
 
-export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLElement) {
+// Direction arbiter shared by the d-pad and the keyboard. The game defers a key release that arrives
+// in the same frame as a press (bd.keyReleased: f/m flags) to the next frame, where it stops the hero.
+// So a 6 -> 8 switch sent as "up 6, down 8" in one frame moves down for a frame and then stops: the
+// press looks swallowed. Here only one direction is ever held in the game; on a switch the old one is
+// released first and the new one pressed one game frame later (frame = 1000/fps, 50-70 ms by speed).
+const DIR_GAP = 90;
+const DIRS = new Set(["2", "4", "6", "8"]);
+export function createDirections(session: PlayerSession) {
+  const held: string[] = [];                         // sources currently holding a direction, newest last
+  let active = "", timer = 0;
+  const apply = () => {
+    const want = held[held.length - 1] ?? "";
+    if (want === active) return;
+    clearTimeout(timer);
+    if (active) void session.key(active, false);
+    const prev = active;
+    active = want;
+    if (!want) return;
+    if (!prev) { void session.key(want, true); return; }
+    timer = window.setTimeout(() => { if (active === want) void session.key(want, true); }, DIR_GAP);
+  };
+  return {
+    isDir: (key: string) => DIRS.has(key),
+    down(key: string) { const i = held.indexOf(key); if (i >= 0) held.splice(i, 1); held.push(key); apply(); },
+    up(key: string) { const i = held.indexOf(key); if (i >= 0) { held.splice(i, 1); apply(); } },
+    clear() { held.length = 0; apply(); },
+  };
+}
+export type Directions = ReturnType<typeof createDirections>;
+
+export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLElement, dirs: Directions) {
   const held = new Map<string, Set<number>>();            // key -> pointer ids holding it
   const press = (key: string, id: number) => {
     let ids = held.get(key);
@@ -32,9 +62,9 @@ export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLE
   let pointer = -1, dir = "";
   const setDir = (next: string) => {
     if (next === dir) return;
-    if (dir) { release(dir, pointer); arms.get(dir)!.classList.remove("on"); }
+    if (dir) { dirs.up(dir); arms.get(dir)!.classList.remove("on"); }
     dir = next;
-    if (dir) { press(dir, pointer); arms.get(dir)!.classList.add("on"); }
+    if (dir) { dirs.down(dir); arms.get(dir)!.classList.add("on"); }
   };
   const dirAt = (e: PointerEvent) => {
     const r = dpad.getBoundingClientRect();
@@ -56,5 +86,5 @@ export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLE
   dpad.addEventListener("lostpointercapture", end);
   dpad.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  window.addEventListener("blur", () => { held.clear(); dir = ""; pointer = -1; for (const a of arms.values()) a.classList.remove("on"); void session.releaseKeys(); });
+  window.addEventListener("blur", () => { held.clear(); dir = ""; pointer = -1; dirs.clear(); for (const a of arms.values()) a.classList.remove("on"); void session.releaseKeys(); });
 }
