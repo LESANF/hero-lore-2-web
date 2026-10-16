@@ -3,6 +3,7 @@
 import { startWasmSession } from "./backend/wasm";
 import type { SessionEvent } from "./backend";
 import { setMasterVolume, setPcmVolume } from "./midi";
+import { mountInput } from "./input";
 
 const GAME_URL = new URLSearchParams(location.search).get("pkg") ?? "game/hero2.zip";
 
@@ -65,6 +66,7 @@ async function main() {
     else if (event.type === "warning") console.warn(event.message);
   };
   const session = startWasmSession("hero2.zip", game, font, onEvent);
+  mountInput(session, document.getElementById("hud")!, document.getElementById("zone")!, document.getElementById("stick")!);
 
   const held = new Set<string>();
   window.addEventListener("keydown", (e) => {
