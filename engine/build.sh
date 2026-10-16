@@ -34,5 +34,6 @@ rm -rf build/web && cp -R build/wie/wie-web/dist build/web
 if [ -n "${GAME:-}" ]; then
   mkdir -p build/web/game
   python3 -I tools/clean_package.py "$GAME" build/web/game/hero2.zip
+  python3 -I tools/patch_game.py build/web/game/hero2.zip      # our byte patches to the game classes (docs/05-game-patches.md)
 fi
 ls -la build/web
