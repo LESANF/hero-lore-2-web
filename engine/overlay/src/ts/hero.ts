@@ -17,7 +17,8 @@ const KEY_MAP: Record<string, string> = {
   Escape: "CLR", Backspace: "CLR",
 };
 
-const status = document.getElementById("status")!;
+const landing = document.getElementById("landing")!;
+const startButton = document.getElementById("start") as HTMLButtonElement;
 const fill = document.getElementById("fill") as HTMLDivElement;
 const detail = document.getElementById("detail")!;
 const notice = document.getElementById("notice")!;
@@ -47,23 +48,26 @@ async function fetchBytes(url: string, onProgress?: (done: number, total: number
   return out;
 }
 
+// Download starts right away; the session starts on the button, which is also the user gesture
+// browsers want before audio may play.
+const assets = Promise.all([
+  fetchBytes(GAME_URL, (d, t) => { if (t) fill.style.width = `${Math.round((d / t) * 90)}%`; }),
+  fetchBytes(new URL("../../../assets/neodgm.ttf", import.meta.url).href),
+]).then((r) => { fill.style.width = "95%"; detail.textContent = ""; return r; });
+
 async function main() {
-  detail.textContent = "게임 파일 받는 중";
-  const [game, font] = await Promise.all([
-    fetchBytes(GAME_URL, (d, t) => { if (t) fill.style.width = `${Math.round((d / t) * 90)}%`; }),
-    fetchBytes(new URL("../../../assets/neodgm.ttf", import.meta.url).href),
-  ]);
-  fill.style.width = "95%";
+  startButton.disabled = true;
   detail.textContent = "시작하는 중";
+  const [game, font] = await assets;
   setMasterVolume(0.5);
   setPcmVolume(0.5);
 
   const onEvent = (event: SessionEvent) => {
     if (event.type === "ready") {
       fill.style.width = "100%";
-      status.classList.add("done");
+      landing.classList.add("done");
       document.body.classList.add("ready");
-      setTimeout(() => status.remove(), 700);
+      setTimeout(() => landing.remove(), 700);
     } else if (event.type === "error") fail(event.cause ?? event.message);
     else if (event.type === "warning") console.warn(event.message);
   };
@@ -107,4 +111,5 @@ async function main() {
   };
 }
 
-main().catch(fail);
+startButton.addEventListener("click", () => { main().catch(fail); }, { once: true });
+assets.catch(fail);
