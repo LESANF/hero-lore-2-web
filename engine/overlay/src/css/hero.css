@@ -1,54 +1,60 @@
 /* 영웅서기 2 web: one column everywhere — game on top, a fixed-height control pad below (gameboy style). */
-:root { --pad: 296px; }
+:root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
 html, body { margin: 0; padding: 0; height: 100%; background: #060a16; overflow: hidden; touch-action: none;
   font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
 #col { position: fixed; inset: 0; margin: 0 auto; width: var(--col, 100vw); display: flex; flex-direction: column;
   padding-top: env(safe-area-inset-top); box-sizing: border-box; }
-#stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; background: #000; }
-#canvas { image-rendering: pixelated; max-width: 100%; max-height: 100%; width: 100%; height: auto; object-fit: contain; }
+#stage { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: #000; }
+#canvas { image-rendering: pixelated; width: 100%; height: auto; display: block; }
 #canvas:focus { outline: none; }
 body:not(.ready) #pad { visibility: hidden; }
 
-/* control pad: 296px tall, positions from docs/04-pad-assets.md wireframe (393px wide reference).
-   Placeholder styling until the drawn assets arrive; then each button gets a background-image. */
-#pad { position: relative; flex: 0 0 var(--pad); height: var(--pad); background: #141a2c; border-top: 2px solid #3a3350;
-  padding-bottom: env(safe-area-inset-bottom); box-sizing: content-box; }
-#pad .key { position: absolute; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none;
-  -webkit-user-select: none; -webkit-touch-callout: none; border: 2px solid #c9a24a; background: #0b1326; color: #fff;
-  font: 700 14px/1 system-ui, "Apple SD Gothic Neo", sans-serif; box-shadow: 0 3px 0 #5a3f1c, 0 6px 12px rgba(0,0,0,.45); cursor: pointer; }
-#pad .key.down { transform: translateY(2px); filter: brightness(.75); box-shadow: 0 1px 0 #5a3f1c; }
-#pad .key small { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 1px 4px; border-radius: 3px;
-  background: #e8c872; color: #2a1f08; font: 700 9px/1 ui-monospace, Menlo, monospace; }
-@media (pointer: coarse) { #pad .key small { display: none; } }
-#pad .round { border-radius: 50%; }
-#pad .pill { border-radius: 999px; width: 74px; height: 30px; font-size: 12px; }
-#k-map { left: 14px; top: 10px; }
-#k-menu { right: 14px; top: 10px; }
-#pad .skill { width: 52px; height: 52px; border-color: #7fa4e8; }
-#pad .s1 { right: 145px; top: 72px; } #pad .s3 { right: 87px; top: 72px; }
-#pad .s7 { right: 145px; top: 130px; } #pad .s9 { right: 87px; top: 130px; }
-#pad .attack { right: 11px; top: 94px; width: 70px; height: 70px; font-size: 15px; border-color: #e8905a; }
-#pad .strip { position: absolute; left: 0; right: 0; top: 236px; display: flex; justify-content: center; gap: 8px; }
-#pad .strip .key { position: relative; width: 76px; }
-#pad .strip .key[data-key="0"] { border-color: #7fd38a; width: 96px; gap: 6px; }
-/* live copies of the game's own HUD: skill slot icons and the 회복 item slot (count included) */
-.mirror { image-rendering: pixelated; display: none; }
+/* control pad: drawn assets (docs/04-pad-assets.md, ~/Downloads/hero2-pad-assets/README.md). The pad
+   content is laid out on a 393x304 design grid and scaled to the column width; the pad itself takes
+   whatever height is left under the game, with the home-indicator safe area kept empty. */
+#pad { position: relative; flex: 1 0 auto; min-height: 0; height: 0; background: #0d1020 url(../assets/pad/pad-tile.png) repeat; background-size: 128px 128px;
+  padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; overflow: hidden; }
+#pad-inner { position: absolute; left: 50%; top: 0; width: 393px; height: 304px; transform: translateX(-50%) scale(var(--ps, 1)); transform-origin: top center; }
+#pad .divider { position: absolute; left: 0; top: 0; width: 393px; height: 20px; background: url(../assets/pad/pad-divider.png) center / 100% 100% no-repeat; }
+#pad .key { position: absolute; padding: 0; border: 0; background: transparent center / 100% 100% no-repeat; touch-action: none; user-select: none;
+  -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
+#pad .key.down { filter: brightness(.7); transform: translateY(2px); }
+#pad .key small, #dpad small { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 1px 4px; border-radius: 3px;
+  background: rgba(20,16,10,.85); border: 1px solid #c9a24a; color: #efe0b0; font: 700 9px/1 ui-monospace, Menlo, monospace; pointer-events: none; }
+@media (pointer: coarse) { #pad .key small, #dpad small { display: none; } }   /* key hints only mean something with a keyboard */
+#pad .pill { width: 96px; height: 40px; background-image: url(../assets/pad/pill.png); }
+#pad .pill::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 32px; transform: translate(-50%, -50%); background: center / contain no-repeat; }
+#pad .map { left: 12px; top: 26px; } #pad .map::after { background-image: url(../assets/pad/ico-map.png); }
+#pad .menu { right: 12px; top: 26px; } #pad .menu::after { background-image: url(../assets/pad/ico-menu.png); }
+#pad .potion { left: 92px; top: 260px; } #pad .potion::after { background-image: url(../assets/pad/ico-potion.png); }
+#pad .swap { left: 205px; top: 260px; } #pad .swap::after { background-image: url(../assets/pad/ico-swap.png); }
+#pad .skill { width: 58px; height: 58px; }
+#pad .s1 { left: 174px; top: 108px; background-image: url(../assets/pad/btn-skill-1.png); }
+#pad .s3 { left: 236px; top: 108px; background-image: url(../assets/pad/btn-skill-3.png); }
+#pad .s7 { left: 174px; top: 172px; background-image: url(../assets/pad/btn-skill-7.png); }
+#pad .s9 { left: 236px; top: 172px; background-image: url(../assets/pad/btn-skill-9.png); }
+#pad .attack { left: 300px; top: 125px; width: 88px; height: 88px; background-image: url(../assets/pad/btn-attack.png); }
+#pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); filter: none; transform: none; }
+/* d-pad: one image; .arm spans are hit/highlight overlays, direction comes from the finger position */
+#dpad { position: absolute; left: 19px; top: 96px; width: 146px; height: 146px; background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
+  touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
+#dpad .arm { position: absolute; width: 46px; height: 46px; border-radius: 8px; pointer-events: none; }
+#dpad .up { left: 50px; top: 4px; } #dpad .left { left: 4px; top: 50px; } #dpad .right { left: 96px; top: 50px; } #dpad .down { left: 50px; top: 96px; }
+#dpad .arm.on { background: rgba(239,224,176,.35); box-shadow: inset 0 0 10px rgba(239,224,176,.6); }
+#dpad .up small { top: -2px; } #dpad .down small { top: auto; bottom: -2px; } #dpad .left small { left: 2px; transform: none; } #dpad .right small { left: auto; right: 2px; transform: none; }
+/* HUD mirror: the game's own skill icons / item slot copied onto the buttons, translucent so the art shows through */
+.mirror { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); image-rendering: pixelated; opacity: .92; display: none; pointer-events: none; }
 body.hud .mirror { display: block; }
-#pad .skill .mirror { width: 42px; height: 26px; }
-#pad .skill b { font-size: 14px; }
-body.hud #pad .skill b { position: absolute; right: 2px; bottom: 0; font-size: 10px; color: #e8c872; }
-#k-heal .mirror { width: 48px; height: 26px; }
-/* # is 회복 교체 in the field and 스킵 while a dialogue box is up; the label follows */
-#k-hash .skip, body.dialogue #k-hash .swap { display: none; }
-body.dialogue #k-hash .skip { display: inline; }
-body.dialogue #k-hash { border-color: #fff; background: #3b2f12; }
-/* d-pad: one element, direction from the finger's position so the thumb can slide between arms */
-#dpad { position: absolute; left: 22px; top: 66px; width: 150px; height: 150px; touch-action: none; user-select: none; -webkit-user-select: none; }
-#dpad .arm, #dpad .hub { position: absolute; width: 50px; height: 50px; box-sizing: border-box; border: 2px solid #c9a24a; background: #0b1326;
-  color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; pointer-events: none; }
-#dpad .up { left: 50px; top: 0; } #dpad .left { left: 0; top: 50px; } #dpad .right { left: 100px; top: 50px; } #dpad .down { left: 50px; top: 100px; }
-#dpad .hub { left: 50px; top: 50px; background: #1a2140; }
-#dpad .arm.on { background: #c9a24a; color: #2a1f08; }
+#pad .skill .mirror { width: 30px; height: 30px; }
+#pad .potion .mirror { width: 40px; height: 32px; }
+body.hud #pad .potion::after { display: none; }   /* the game's own item icon + count replaces the generic potion */
+.mirror.empty { display: none !important; }        /* an empty skill slot is just black: keep the button's digit */
+/* context: # is 스킵 while a dialogue box is up; potion/map/swap do nothing in menus, so they dim */
+#pad .swap .tag { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); padding: 1px 6px; border-radius: 3px; background: #c9a24a; color: #2a1f08;
+  font: 700 10px/1 system-ui, "Apple SD Gothic Neo", sans-serif; font-style: normal; display: none; }
+body.dialogue #pad .swap .tag { display: block; }
+body.dialogue #pad .swap { filter: drop-shadow(0 0 8px rgba(239,224,176,.9)); }
+body.menu #pad .potion, body.menu #pad .map, body.menu #pad .swap, body.dialogue #pad .potion, body.dialogue #pad .map { opacity: .45; }
 
 /* landing: full-bleed night sky, falling snow, logo, one button; the progress bar shows while the engine downloads */
 #landing { position: fixed; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px;

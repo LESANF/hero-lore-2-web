@@ -104,8 +104,8 @@ function dialogueUp(): boolean {
 // HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom (box
 // interiors measured on 240x320: y 302..314, x 61/84/105/126 for skills 1/3/7/9, 147 for the item,
 // anchored to the bottom edge). Copy them onto the pad buttons every frame while the bar is present.
-const SLOTS: Record<string, [number, number]> = { "1": [62, 19], "3": [85, 17], "7": [106, 17], "9": [127, 17], "0": [148, 22] };
-const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d")!, src: SLOTS[m.dataset.slot!] }));
+const SLOTS: Record<string, [number, number]> = { "1": [68, 12], "3": [90, 12], "7": [111, 12], "9": [132, 12], "0": [153, 16] };
+const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!] }));
 function hudBarUp(): boolean {
   const h = canvas.height;
   probe.width = 2; probe.height = 1;
@@ -120,7 +120,13 @@ function mirrorHud() {
   document.body.classList.toggle("hud", up);
   if (up) {
     const sy = canvas.height - 18;
-    for (const m of mirrors) m.ctx.drawImage(canvas, m.src[0], sy, m.src[1], 13, 0, 0, m.src[1], 13);
+    for (const m of mirrors) {
+      m.ctx.drawImage(canvas, m.src[0], sy, m.src[1], 13, 0, 0, m.src[1], 13);
+      const d = m.ctx.getImageData(0, 0, m.src[1], 13).data;
+      let lit = 0;
+      for (let i = 0; i < d.length; i += 4) if (d[i] + d[i + 1] + d[i + 2] > 300) lit++;   // icon pixels are bright; an empty slot only has its dark border
+      m.ctx.canvas.classList.toggle("empty", lit < 4);
+    }
   }
   requestAnimationFrame(mirrorHud);
 }
@@ -135,18 +141,24 @@ async function boot() {
   fill.style.width = "85%";
   setMasterVolume(0.5);
   setPcmVolume(0.5);
-  // Layout: one column, control pad of fixed height below, game above. The column is as wide as the
-  // viewport (max 480) unless the area above the pad could not hold a 240x320 game at that scale; the
-  // emulated height then fills whatever is left above the pad (320..400). Read once: the game reads
-  // XDisplay once at boot. `?w=&h=` still overrides for tests.
-  const PAD = 296, MAXW = 480;
+  // Layout (docs/04-pad-assets.md): one column, game at native 240x320 scaled to the column width,
+  // the control pad below gets the rest. The pad content is a 393x304 design scaled by --ps = col/393,
+  // so the column shrinks when the viewport is too short to hold game + pad + safe areas.
+  // Read once: the game reads XDisplay once at boot. `?w=&h=` still overrides the emulated size.
+  const cs = getComputedStyle(document.documentElement);
+  const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
   const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-  const area = vh - PAD;
-  const col = Math.floor(Math.min(vw, MAXW, area * 240 / 320));
+  let col = Math.min(vw, 430);
+  for (let i = 0; i < 3; i++) {                     // col depends on the pad scale which depends on col
+    const padH = 304 * Math.min(1.1, col / 393) + sab;
+    col = Math.min(col, Math.floor((vh - sat - padH) * 240 / 320));
+  }
+  col = Math.max(col, 240);
   const q = new URLSearchParams(location.search);
   let w = Number(q.get("w")), h = Number(q.get("h"));
-  if (!(w > 0 && h > 0)) { w = 240; h = Math.min(400, Math.max(320, Math.round(area / (col / 240) / 2) * 2)); }
+  if (!(w > 0 && h > 0)) { w = 240; h = 320; }
   document.documentElement.style.setProperty("--col", `${col}px`);
+  document.documentElement.style.setProperty("--ps", String(Math.min(1.1, col / 393)));
   canvas.dataset.w = String(w); canvas.dataset.h = String(h);
   canvas.style.aspectRatio = `${w} / ${h}`;
   console.log(`hero-lore-2-web: screen ${w}x${h}, column ${col}px, viewport ${vw}x${vh}`);
@@ -177,7 +189,11 @@ function start() {
   document.body.classList.add("ready");
   setTimeout(() => landing.remove(), 700);
   canvas.focus();
-  setInterval(() => document.body.classList.toggle("dialogue", dialogueUp()), 250);
+  setInterval(() => {
+    const dlg = dialogueUp();
+    document.body.classList.toggle("dialogue", dlg);
+    document.body.classList.toggle("menu", !dlg && !document.body.classList.contains("hud"));
+  }, 250);
   requestAnimationFrame(mirrorHud);
 }
 
