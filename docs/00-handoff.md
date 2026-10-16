@@ -5,7 +5,7 @@
 ## 규칙
 - 작성자 LESANF (`nagong1000@naver.com`), 모든 커밋 끝에 `Co-authored-by: claude[bot] <209825114+claude[bot]@users.noreply.github.com>` + 하네스 attribution. PR은 관심사 하나씩, 커밋은 잘게.
 - 게임 파일(`*.zip`, `*.jar`)은 커밋하지 않는다. 원본은 archive.org "100+ Korean WIPI Cell Phone Games Collection"의 `영웅서기2.zip`.
-- 배포는 GitHub Pages(1편과 동일) 예정. 게임 파일 호스팅 방식은 1편처럼 릴리스 에셋으로 할지 사용자 결정 대기.
+- 배포: GitHub Pages(`pages.yml`, build_type=workflow). 게임 파일은 릴리스 `skt-pkg`의 `hero2.zip`(1편의 APK 릴리스와 같은 방식).
 
 ## 설계 결정
 - 엔진은 [wie](https://github.com/dlunch/wie)(MIT) 코어를 그대로 wasm으로 빌드해 쓴다. 원작 jar를 수정하지 않는다.
@@ -18,10 +18,10 @@
 ## 진행 상태
 - [x] PR #1 분석 문서 + jar 언랩 도구 + 라이선스
 - [x] PR #3 `engine/build.sh`: wie 고정 커밋(`engine/WIE_COMMIT`) + 오버레이(`engine/overlay/`) → `build/web/` (wasm 18 MB, 사운드폰트 1 MB). 로컬: `GAME=<영웅서기2.zip> sh engine/build.sh` 후 `cd build/web && python3 -m http.server 8791` → 타이틀·새 게임까지 키보드로 확인(2026-10-16)
-- [ ] 입력층: 떠다니는 스틱 + 원형 버튼(`engine/overlay/src/ts/input.ts` 예정), 키보드는 hero.ts에 있음
+- [x] PR #4 입력층 `engine/overlay/src/ts/input.ts`(스틱·버튼) + 세로 폰 배치. 폰 세로 에뮬로 확인
 - [ ] 로딩 화면 로고·배경(1편 스타일). 원본 로고는 `img/logo.mph/.mpd` 자체 포맷이라 당장은 타이틀 캡처를 씀
 - [ ] 세이브 내보내기/가져오기
-- [ ] Pages 워크플로 + 게임 파일 공급 방식
+- [x] PR #5 `.github/workflows/pages.yml`: 릴리스 `skt-pkg`의 `hero2.zip`(정리본)을 받아 빌드·배포. 1편과 같이 배포 기록은 1개만 남김
 - [ ] 완주 소크 테스트(자동 플레이) 기록 → `docs/02-compat.md`
 
 ## 로컬 환경 (이 맥)
