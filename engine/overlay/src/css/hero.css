@@ -5,8 +5,10 @@ html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow:
 #canvas:focus { outline: none; }
 
 /* loading screen, same shape as hero-lord-web */
-#status { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 14px;
-  padding: 0 24px 9vh; box-sizing: border-box; color: #fff; text-align: center; background: #0b1326; transition: opacity .6s ease; }
+#status { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
+  padding: 0 24px; box-sizing: border-box; color: #fff; text-align: center; transition: opacity .6s ease;
+  background: radial-gradient(ellipse at 50% 40%, #1d2a52 0%, #0b1326 60%, #060a16 100%); }
+#logo { width: min(70vw, 420px); height: auto; margin-bottom: 18px; image-rendering: pixelated; filter: drop-shadow(0 6px 22px rgba(0,0,0,.6)); }
 #status.done { opacity: 0; pointer-events: none; }
 #bar { width: min(72vw, 460px); height: 6px; border-radius: 999px; background: rgba(255,255,255,.18); overflow: hidden; }
 #fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #ffd56b, #fff4c2 60%, #fff); transition: width .15s linear; }
