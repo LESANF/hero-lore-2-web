@@ -61,6 +61,7 @@ async function main() {
     if (event.type === "ready") {
       fill.style.width = "100%";
       status.classList.add("done");
+      document.body.classList.add("ready");
       setTimeout(() => status.remove(), 700);
     } else if (event.type === "error") fail(event.cause ?? event.message);
     else if (event.type === "warning") console.warn(event.message);
