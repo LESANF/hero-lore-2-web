@@ -17,6 +17,18 @@
 <div id="stage"><canvas id="canvas" width="240" height="320"></canvas></div>
 <div id="zone"></div>
 <div id="stick"><div class="ring"></div><div class="knob"></div><span class="hint">WASD</span></div>
+<button id="save-toggle" class="pill" type="button">세이브</button>
+<div id="save-sheet" hidden>
+  <div class="card">
+    <h2>세이브</h2>
+    <p>게임은 이 브라우저 안에 저장됩니다. 다른 기기나 브라우저로 옮기려면 파일로 내보내고, 거기서 가져오세요.</p>
+    <button id="save-export" type="button">세이브 내보내기</button>
+    <button id="save-import" type="button">세이브 가져오기</button>
+    <input id="save-file" type="file" accept=".json,application/json" hidden>
+    <p id="save-msg"></p>
+    <button id="save-close" type="button" class="ghost">닫기</button>
+  </div>
+</div>
 <div id="hud">
   <div class="top">
     <button class="key" data-key="CLR"><small>ESC</small>메뉴</button>

@@ -52,3 +52,16 @@ body:not(.ready) #hud, body:not(.ready) #zone { display: none; }   /* controls a
   #hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 16px); right: 12px; }
   #hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 16px); right: 104px; }
 }
+
+/* save sheet */
+#save-toggle { position: fixed; top: calc(env(safe-area-inset-top) + 10px); left: 12px; z-index: 6; padding: 6px 12px; border-radius: 999px;
+  border: 0; background: rgba(30,26,24,.72); color: rgba(255,255,255,.85); font: 600 12px/1 system-ui, sans-serif; backdrop-filter: blur(6px); cursor: pointer; }
+body:not(.ready) #save-toggle { display: none; }
+#save-sheet { position: fixed; inset: 0; z-index: 7; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.55); }
+#save-sheet[hidden] { display: none; }
+#save-sheet .card { width: min(88vw, 360px); padding: 20px 20px 14px; border-radius: 14px; background: #f7f3ea; color: #3a2f2a; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+#save-sheet h2 { margin: 0 0 8px; font-size: 18px; }
+#save-sheet p { margin: 0 0 14px; font-size: 13px; line-height: 1.5; }
+#save-sheet button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: 2px solid #2b4a8a; background: #fff; color: #1b2a4a; font: 700 15px/1 system-ui, sans-serif; cursor: pointer; }
+#save-sheet button.ghost { border-color: transparent; background: transparent; font-weight: 600; }
+#save-msg { min-height: 1.2em; color: #2b4a8a; }

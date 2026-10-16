@@ -4,6 +4,7 @@ import { startWasmSession } from "./backend/wasm";
 import type { SessionEvent } from "./backend";
 import { setMasterVolume, setPcmVolume } from "./midi";
 import { mountInput } from "./input";
+import { exportSaves, importSaves } from "./saves";
 
 const GAME_URL = new URLSearchParams(location.search).get("pkg") ?? "game/hero2.zip";
 
@@ -86,6 +87,24 @@ async function main() {
   });
   window.addEventListener("blur", () => { held.clear(); void session.releaseKeys(); });
   console.log("hero-lore-2-web: session started");
+
+  // save sheet
+  const sheet = document.getElementById("save-sheet")!;
+  const msg = document.getElementById("save-msg")!;
+  const file = document.getElementById("save-file") as HTMLInputElement;
+  document.getElementById("save-toggle")!.onclick = () => { sheet.hidden = false; void session.releaseKeys(); };
+  document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
+  document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
+  document.getElementById("save-import")!.onclick = () => file.click();
+  file.onchange = () => {
+    const f = file.files?.[0];
+    if (!f) return;
+    importSaves(f).then((n) => {
+      msg.textContent = `${n}개 항목을 가져왔습니다. 새로고침하면 적용됩니다.`;
+      setTimeout(() => location.reload(), 1200);
+    }, fail);
+    file.value = "";
+  };
 }
 
 main().catch(fail);

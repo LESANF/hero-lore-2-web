@@ -50,8 +50,9 @@ hero-lord-web; keyboard works on desktop.
 
 ## Saves
 
-The game saves into the browser (IndexedDB, per site). Export/import tools are on the list in
-`docs/00-handoff.md`.
+The game saves into the browser (IndexedDB, per site). The **세이브** pill at the top-left opens a sheet
+with 세이브 내보내기 (downloads one JSON with every stored entry) and 세이브 가져오기 (writes a file
+back and reloads). Use it to move progress between devices or browsers.
 
 ## Build
 
