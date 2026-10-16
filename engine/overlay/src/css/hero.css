@@ -31,6 +31,10 @@ body:not(.ready) #pad { visibility: hidden; }
 #pad .strip { position: absolute; left: 0; right: 0; top: 236px; display: flex; justify-content: center; gap: 8px; }
 #pad .strip .key { position: relative; width: 76px; }
 #pad .strip .key[data-key="0"] { border-color: #7fd38a; }
+/* # is 회복 교체 in the field and 스킵 while a dialogue box is up; the label follows */
+#k-hash .skip, body.dialogue #k-hash .swap { display: none; }
+body.dialogue #k-hash .skip { display: inline; }
+body.dialogue #k-hash { border-color: #fff; background: #3b2f12; }
 /* d-pad: one element, direction from the finger's position so the thumb can slide between arms */
 #dpad { position: absolute; left: 22px; top: 66px; width: 150px; height: 150px; touch-action: none; user-select: none; -webkit-user-select: none; }
 #dpad .arm, #dpad .hub { position: absolute; width: 50px; height: 50px; box-sizing: border-box; border: 2px solid #c9a24a; background: #0b1326;

@@ -83,6 +83,24 @@ function menuUp(): boolean {
   return false;
 }
 
+// Dialogue box = two full-width gold border rows 34px apart in the lower third (measured 255/289 on
+// 240x320). While it is up, # means 스킵, so the pad relabels that button.
+function dialogueUp(): boolean {
+  const w = canvas.width, h = canvas.height;
+  const y0 = Math.floor(h * 0.6);
+  probe.width = w; probe.height = h - y0;
+  probeCtx.drawImage(canvas, 0, y0, w, h - y0, 0, 0, w, h - y0);
+  const d = probeCtx.getImageData(0, 0, w, h - y0).data;
+  const full: boolean[] = [];
+  for (let y = 0; y < h - y0; y++) {
+    let n = 0;
+    for (let x = 0; x < w; x++) { const p = (y * w + x) * 4; if (d[p] + d[p + 1] + d[p + 2] > 300) n++; }
+    full.push(n >= w * 0.8);
+  }
+  for (let y = 0; y + 34 < full.length; y++) if (full[y] && full[y + 34]) return true;
+  return false;
+}
+
 let session: WasmSession | undefined;
 let started = false;
 const KEY_CLICK = (key: string, down: boolean) => { if (started) void session?.key(key, down).catch(fail); };
@@ -135,6 +153,7 @@ function start() {
   document.body.classList.add("ready");
   setTimeout(() => landing.remove(), 700);
   canvas.focus();
+  setInterval(() => document.body.classList.toggle("dialogue", dialogueUp()), 250);
 }
 
 const held = new Set<string>();
