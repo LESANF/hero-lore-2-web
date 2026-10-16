@@ -89,6 +89,15 @@ body:not(.ready) #hud, body:not(.ready) #zone { display: none; }   /* controls a
   #hud .swap { right: 86px; bottom: calc(env(safe-area-inset-bottom) + 140px); width: 44px; height: 44px; }
 }
 
+/* experiment: emulated screen matches the viewport, controls sit over the game */
+body.fill { --band: 0px; }
+body.fill #stage { padding: 0; }
+body.fill #canvas { height: 100%; width: auto; max-width: 100%; }
+body.fill #hud .key[data-key] { bottom: auto; top: calc(env(safe-area-inset-top) + 12px); left: auto; }
+body.fill #hud .key[data-key="CLR"] { right: 12px; }
+body.fill #hud .key[data-key="*"] { right: 86px; }
+body.fill #hud .big, body.fill #hud .s1, body.fill #hud .s3, body.fill #hud .s7, body.fill #hud .s9, body.fill #hud .item, body.fill #hud .swap { margin-bottom: 44px; }
+
 /* save sheet */
 #save-toggle { position: fixed; top: calc(env(safe-area-inset-top) + 10px); left: 12px; z-index: 6; padding: 6px 12px; border-radius: 999px;
   border: 0; background: rgba(30,26,24,.72); color: rgba(255,255,255,.85); font: 600 12px/1 system-ui, sans-serif; backdrop-filter: blur(6px); cursor: pointer; }

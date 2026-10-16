@@ -16,7 +16,9 @@ if [ "$(git -C build/wie rev-parse HEAD 2>/dev/null || true)" != "$COMMIT" ]; th
   git -C build/wie fetch -q --depth 1 origin "$COMMIT"
   git -C build/wie checkout -q "$COMMIT"
 fi
-git -C build/wie checkout -q -- wie-web/src/ts/midi.ts   # undo our sed before re-applying
+git -C build/wie checkout -q -- wie-web/src/ts/midi.ts wie-skvm/src/classes/com/xce/lcdui/x_display.rs wie-web/src/ts/backend/wasm.ts   # undo our edits before re-applying
+# engine/patches: XDisplay reports the real screen size (wie hardcodes 240x320), canvas size from data-w/h
+git -C build/wie apply ../../engine/patches/screen-size.patch
 
 # Overlay: our page, entry config, and two one-line sed patches so the bundle works under a sub-path
 # (GitHub Pages serves this project at /hero-lore-2-web/, wie assumes the site root).
