@@ -56,7 +56,8 @@ body:not(.wide) #pad .row.mid .attack { margin-right: calc(-1 * min(12px * var(-
 #dpad .arm { position: absolute; width: 31.4%; height: 31.4%; border-radius: 8px; pointer-events: none; }
 #dpad .up { left: 34.3%; top: 2.9%; } #dpad .left { left: 2.9%; top: 34.3%; } #dpad .right { left: 65.7%; top: 34.3%; } #dpad .down { left: 34.3%; top: 65.7%; }
 #dpad .arm.on { background: rgba(239,224,176,.35); box-shadow: inset 0 0 10px rgba(239,224,176,.6); }
-#dpad .up small { top: -2px; } #dpad .down small { top: auto; bottom: -2px; } #dpad .left small { left: 2px; transform: none; } #dpad .right small { left: auto; right: 2px; transform: none; }
+#dpad .up small { top: -2px; } #dpad .down small { top: auto; bottom: -2px; } #dpad .left small { left: -2px; top: 50%; transform: translateY(-50%); } #dpad .right small { left: auto; right: -2px; top: 50%; transform: translateY(-50%); }
+#pad .map small, #pad .menu small { top: auto; bottom: -16px; }   /* these sit at the screen top on PC */
 /* HUD mirror (HANDOFF-FINAL.md): skills show the whole slot as drawn by the game; the item pill shows
    the potion + count with only pure black dropped, on the pill-item-on art */
 .mirror { position: absolute; image-rendering: pixelated; pointer-events: none; display: none; }
