@@ -262,7 +262,23 @@ window.addEventListener("blur", () => { held.clear(); dirs?.clear(); void sessio
 const sheet = document.getElementById("save-sheet")!;
 const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
-document.getElementById("save-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
+document.getElementById("file-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
+// SAVE = the game's own 메뉴 → 시스템 → 세이브 → 예, typed for you; the game shows "저장 되었습니다." and the menus close again.
+// Only from the field (HUD up, no dialogue): the game menu always opens on 캐릭터, so 2 (up) wraps to 시스템.
+// ponytail: blind key macro with fixed delays; on a boss map the game refuses to save and the macro just backs out.
+const savePad = document.getElementById("save-pad")!;
+savePad.onclick = async () => {
+  const b = document.body.classList;
+  if (!session || savePad.classList.contains("busy") || !b.contains("hud") || b.contains("dialogue")) return;
+  savePad.classList.add("busy");
+  const tap = async (k: string) => { await session!.key(k, true); await sleep(80); await session!.key(k, false); await sleep(300); };
+  try {
+    await session.releaseKeys();
+    for (const k of ["CLR", "2", "5", "5", "5"]) await tap(k);   // menu, 시스템, 세이브, 예
+    await sleep(900);                                            // let "저장 되었습니다." show
+    for (const k of ["5", "CLR", "CLR"]) await tap(k);           // close popup, 시스템, menu
+  } catch (e) { fail(e); } finally { savePad.classList.remove("busy"); }
+};
 // long press anywhere would open the page's context menu / image callout; this is a game screen
 document.addEventListener("contextmenu", (e) => e.preventDefault());
 document.addEventListener("selectstart", (e) => e.preventDefault());
