@@ -263,30 +263,26 @@ const sheet = document.getElementById("save-sheet")!;
 const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
 document.getElementById("file-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
-// SAVE = the game's own 메뉴 → 시스템 → 세이브 → 예, typed for you behind a frozen copy of the screen, menus closed
-// again, then our own "저장되었습니다" toast. Only from the field (HUD up, no dialogue): the game menu always opens on
-// 캐릭터, so 2 (up) wraps to 시스템.
+// SAVE = the game's own 메뉴 → 시스템 → 세이브 → 예, typed for you behind a frozen copy of the screen; the freeze
+// lifts on the game's "저장 되었습니다." popup, then the menus close again. Only from the field (HUD up, no
+// dialogue): the game menu always opens on 캐릭터, so 2 (up) wraps to 시스템.
 // ponytail: blind key macro with fixed delays; on a boss map the game refuses to save and the macro just backs out.
 const savePad = document.getElementById("save-pad")!;
 savePad.onclick = async () => {
   const b = document.body.classList;
   if (!session || savePad.classList.contains("busy") || !b.contains("hud") || b.contains("dialogue")) return;
   savePad.classList.add("busy");
-  const stage = document.getElementById("stage")!;
   const freeze = document.createElement("canvas");
   freeze.id = "freeze"; freeze.width = canvas.width; freeze.height = canvas.height;
   freeze.getContext("2d")!.drawImage(canvas, 0, 0);
-  stage.append(freeze);
+  document.getElementById("stage")!.append(freeze);
   const tap = async (k: string) => { await session!.key(k, true); await sleep(60); await session!.key(k, false); await sleep(180); };
   try {
     await session.releaseKeys();
     for (const k of ["CLR", "2", "5", "5", "5"]) await tap(k);   // menu, 시스템, 세이브, 예 → "저장 되었습니다."
-    await sleep(250);
+    freeze.remove();
+    await sleep(1000);                                           // the game's own popup
     for (const k of ["5", "CLR", "CLR"]) await tap(k);           // close popup, 시스템, menu
-    await sleep(150);
-    const toast = document.createElement("div");
-    toast.id = "toast"; toast.textContent = "저장되었습니다";
-    stage.append(toast); setTimeout(() => toast.remove(), 1500);
   } catch (e) { fail(e); } finally { freeze.remove(); savePad.classList.remove("busy"); }
 };
 // long press anywhere would open the page's context menu / image callout; this is a game screen
