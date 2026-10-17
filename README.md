@@ -39,7 +39,26 @@ and documented:
 | Screens | fixed 240×320 | fills any phone in portrait; desktop and landscape put the controls beside the game | `hero.ts` `layout()` |
 | Saves | stuck in one browser | export / import as one JSON file | `saves.ts` |
 
-Before / after clips: _coming_ (boot, speed, shake, controls).
+### Before / after
+
+Same browser, same save. Before = the first working build (`main` before these changes, unpatched game);
+after = this branch.
+
+| Boot: open the page → title | 이어하기: load the save |
+|---|---|
+| ![boot](docs/img/ba-boot.gif) | ![load](docs/img/ba-load.gif) |
+| splash and PRESS ANY KEY on the left; booted behind the landing on the right | the old engine waited a frame per file read |
+
+| Speed: walking, NORMAL | Shake: casting the four skills |
+|---|---|
+| ![speed](docs/img/ba-speed.gif) | ![shake](docs/img/ba-shake.gif) |
+| 10 → 15 fps | a quarter of the old amplitude |
+
+**Controls and screen**
+
+![controls](docs/img/ba-controls.gif)
+
+Sound is not in the clips; it was silent before and plays now.
 
 Game-class edits are same-length byte patches applied to the package at build time (`tools/patch_game.py`;
 the build fails if a pattern is not found exactly once). Engine edits are small patches on a pinned wie commit.
