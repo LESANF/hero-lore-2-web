@@ -19,10 +19,9 @@ const KEY_MAP: Record<string, string> = {
 
 declare const __APP_VERSION__: string;
 const landing = document.getElementById("landing")!;
-document.getElementById("ver")!.textContent = `${__APP_VERSION__} · engine: wie by Inseok Lee`;
+document.getElementById("ver")!.textContent = __APP_VERSION__.split("+")[0];   // full build id stays in the console log
 const startButton = document.getElementById("start") as HTMLButtonElement;
 const fill = document.getElementById("fill") as HTMLDivElement;
-const detail = document.getElementById("detail")!;
 const notice = document.getElementById("notice")!;
 
 const fail = (err: unknown) => {
@@ -189,7 +188,7 @@ async function boot() {
   startButton.disabled = true;
   const t0 = performance.now();
   const [game, font] = await assets;
-  fill.style.width = "85%"; detail.textContent = "엔진 시작 중";
+  fill.style.width = "85%";
   console.log(`boot: assets ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   setMasterVolume(0.5);
   setPcmVolume(0.5);
@@ -208,7 +207,7 @@ async function boot() {
     });
   });
   await ready;
-  fill.style.width = "92%"; detail.textContent = "인트로 건너뛰는 중";
+  fill.style.width = "92%";
   console.log(`boot: engine ready ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   dirs = createDirections(session!);
   mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!, dirs);
@@ -220,7 +219,6 @@ async function boot() {
     await sleep(250);
   }
   fill.style.width = "100%";
-  detail.textContent = "";
   console.log(`boot: menu ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   startButton.disabled = false;
 }
