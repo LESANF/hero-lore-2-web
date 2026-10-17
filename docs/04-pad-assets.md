@@ -89,3 +89,8 @@ outline, flat front view, centered, transparent background, no text, no watermar
 
 W A S D 이동 · U I / J K 스킬 1 3 / 7 9 · Space·Enter·L 공격/확인 · O 회복(0) · P 교체/스킵(#) ·
 ; 지도(*) · Esc·Backspace 메뉴(CLR). 패드 버튼 위에 키 힌트를 작게 표시하되 터치 기기에선 숨긴다.
+
+## 랜딩 (2026-10-17, `~/Downloads/hero2-pad-assets/landing/HANDOFF-LANDING.md`)
+
+`assets/logo.png`(1200×655, FAN-MADE WEB PORT 포함), `assets/landing/btn-start@2x.png`·`btn-start-loading@2x.png`(글자까지 그림, 버튼이 disabled면 LOADING),
+`bg-landing.jpg`(1080×1920, 공식 일러스트를 남색에 미리 합성; PC·가로는 높이 맞춤), `bar-frame.png`(9-slice: slice 6 30, 화면 3px 15px), `bar-fill.png`(32×12로 가로 반복). 눈 효과·dev 크레딧 줄 없음, 버전은 우하단.

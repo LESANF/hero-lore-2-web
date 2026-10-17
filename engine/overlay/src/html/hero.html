@@ -20,7 +20,10 @@
     <div class="divider"></div>
     <div class="row top">
       <button class="key pill map" data-key="*"><small>;</small></button>
-      <button id="save-pad" type="button" aria-label="세이브"></button>
+      <div class="save-col">
+        <button id="save-pad" type="button" aria-label="게임 저장"></button>   <!-- in-game save in one tap -->
+        <button id="file-pad" type="button" aria-label="세이브 파일"></button>   <!-- save file export / import sheet -->
+      </div>
       <button class="key pill menu" data-key="CLR"><small>ESC</small></button>
     </div>
     <div class="row mid">
@@ -59,11 +62,9 @@
   </div>
 </div>
 <div id="landing">
-  <div class="snow" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <img id="logo" src="../assets/logo.png" alt="영웅서기 2: 빙해의 검사">
-  <button id="start" type="button" disabled>시작하기</button>
+  <button id="start" type="button" aria-label="시작하기" disabled></button>   <!-- START / LOADING are drawn in the images -->
   <div id="bar"><div id="fill"></div></div>
-  <small id="detail">준비 중</small>
   <pre id="notice"></pre>
   <small id="ver"></small>
 </div>
