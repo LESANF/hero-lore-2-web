@@ -156,6 +156,34 @@ const KEY_CLICK = (key: string, down: boolean) => {
   void session?.key(key, down).catch(fail);
 };
 
+// Layout: sizes are design px times --s (the 393-wide pad design), so the whole pad scales together.
+// Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
+// tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
+// gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
+const S_MIN = 0.62, PAD_H = 270;                    // pad design height: divider 20 + top row + d-pad block + bottom row
+function layout(w: number, h: number) {
+  const cs = getComputedStyle(document.documentElement);
+  const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
+  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight - sat - sab;
+  const ratio = h / w;
+  let gameW: number, s: number;
+  const wideW = Math.floor(vh / ratio), gutter = (vw - wideW) / 2;
+  const wide = gutter >= 200;
+  if (wide) {
+    gameW = wideW;
+    s = Math.min(1.6, (gutter - 40) / 270, vh / 430);       // right gutter holds skills + attack: 232 design px wide
+  } else {
+    const sMin = vw > 480 ? 0.9 : S_MIN;           // phones: full-width game first; wider (foldable open, square windows): keep the pad big
+    gameW = Math.min(vw, Math.floor((vh - PAD_H * sMin) / ratio));
+    s = Math.max(sMin, Math.min(1.3, vw / 393, (vh - gameW * ratio) / PAD_H));
+  }
+  gameW = Math.max(gameW, 160);
+  const root = document.documentElement.style;
+  document.body.classList.toggle("wide", wide);
+  root.setProperty("--game-w", `${gameW}px`); root.setProperty("--game-h", `${Math.round(gameW * ratio)}px`); root.setProperty("--s", s.toFixed(3));
+  console.log(`hero-lore-2-web ${__APP_VERSION__}: screen ${w}x${h}, ${wide ? "wide" : "portrait"} game ${gameW}px, pad x${s.toFixed(2)}, viewport ${vw}x${vh}`);
+}
+
 async function boot() {
   startButton.disabled = true;
   const t0 = performance.now();
@@ -164,33 +192,13 @@ async function boot() {
   console.log(`boot: assets ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   setMasterVolume(0.5);
   setPcmVolume(0.5);
-  // Layout (docs/04-pad-assets.md): one column, game at native 240x320 scaled to the column width,
-  // the control pad below gets the rest. The pad content is a 393x304 design scaled by --ps = col/393,
-  // so the column shrinks when the viewport is too short to hold game + pad + safe areas.
-  // Read once: the game reads XDisplay once at boot. `?w=&h=` still overrides the emulated size.
-  const cs = getComputedStyle(document.documentElement);
-  const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
-  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-  let col = Math.min(vw, 430);
-  for (let i = 0; i < 3; i++) {                     // col depends on the pad scale which depends on col
-    const padH = 304 * Math.min(1.1, col / 393) + sab;
-    col = Math.min(col, Math.floor((vh - sat - padH) * 240 / 320));
-  }
-  col = Math.max(col, 240);
+  // Emulated screen size: read once, the game reads XDisplay once at boot. `?w=&h=` overrides it.
   const q = new URLSearchParams(location.search);
   let w = Number(q.get("w")), h = Number(q.get("h"));
   if (!(w > 0 && h > 0)) { w = 240; h = 320; }
-  const gameH = Math.round(col * 320 / 240);
-  const padH = Math.max(0, vh - sat - sab - gameH);
-  const ps = Math.min(1.1, col / 393, padH / 304);
-  const ex = Math.min(140, Math.max(0, padH / ps - 304));          // spread the rows over extra height, up to a point
-  const padTop = Math.max(0, (padH - (304 + ex) * ps) / 2);         // then centre the block in what is left
-  const root = document.documentElement.style;
-  root.setProperty("--col", `${col}px`); root.setProperty("--ps", String(ps));
-  root.setProperty("--ex", `${ex.toFixed(1)}px`); root.setProperty("--pad-top", `${padTop.toFixed(1)}px`);
   canvas.dataset.w = String(w); canvas.dataset.h = String(h);
-  canvas.style.aspectRatio = `${w} / ${h}`;
-  console.log(`hero-lore-2-web ${__APP_VERSION__}: screen ${w}x${h}, column ${col}px, pad ${padH}px x${ps.toFixed(2)} ex ${ex.toFixed(0)}, viewport ${vw}x${vh}`);
+  layout(w, h);
+  window.addEventListener("resize", () => layout(w, h));   // rotation, window resize, browser bars
   const ready = new Promise<void>((resolve) => {
     session = startWasmSession("hero2.zip", game, font, (event: SessionEvent) => {
       if (event.type === "ready") resolve();
@@ -218,6 +226,9 @@ async function boot() {
 
 function start() {
   started = true;
+  // iOS 17+: "playback" keeps Web Audio audible with the ring/silent switch on silent (default "auto" mutes it)
+  const nav = navigator as Navigator & { audioSession?: { type: string } };
+  if (nav.audioSession) nav.audioSession.type = "playback";
   void audioReady?.then((state) => state?.ctx.resume());   // the gesture that unlocks sound
   landing.classList.add("done");
   document.body.classList.add("ready");
@@ -252,8 +263,10 @@ window.addEventListener("blur", () => { held.clear(); dirs?.clear(); void sessio
 const sheet = document.getElementById("save-sheet")!;
 const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
-document.getElementById("save-toggle")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
-document.getElementById("save-pad")!.onclick = () => document.getElementById("save-toggle")!.click();
+document.getElementById("save-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
+// long press anywhere would open the page's context menu / image callout; this is a game screen
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+document.addEventListener("selectstart", (e) => e.preventDefault());
 document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
 document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
 document.getElementById("save-import")!.onclick = () => file.click();
