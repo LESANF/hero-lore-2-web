@@ -19,7 +19,7 @@ const KEY_MAP: Record<string, string> = {
 
 declare const __APP_VERSION__: string;
 const landing = document.getElementById("landing")!;
-document.getElementById("ver")!.textContent = __APP_VERSION__;
+document.getElementById("ver")!.textContent = `${__APP_VERSION__} · engine: wie by Inseok Lee`;
 const startButton = document.getElementById("start") as HTMLButtonElement;
 const fill = document.getElementById("fill") as HTMLDivElement;
 const detail = document.getElementById("detail")!;
