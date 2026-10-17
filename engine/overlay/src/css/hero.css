@@ -50,12 +50,11 @@ body:not(.wide) #pad .row.mid .atk { margin-right: calc(-1 * min(12px * var(--s,
 #pad .s9 { background-image: url(../assets/pad/hudbox/hudbox-empty-9.png); }
 #pad .attack { width: calc(112px * var(--s, 1)); height: calc(112px * var(--s, 1)); border-radius: 50%; background-image: url(../assets/pad/btn-attack.png); }
 #pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); }
-/* back (CLR, same as the menu pill) under the attack button, portrait only; it overlaps the bottom row's height */
+/* back (CLR, same as the menu pill) under the attack button; in portrait it overlaps the bottom row's height */
 #pad .atk { position: relative; display: flex; }
 #pad .back { position: absolute; left: 50%; top: calc(131px * var(--s, 1)); transform: translateX(-50%); width: calc(64px * var(--s, 1)); height: calc(64px * var(--s, 1));
   border-radius: 50%; background-image: url(../assets/pad/btn-back.png); }
 #pad .back.down { transform: translateX(-50%) translateY(2px); }
-body.wide #pad .back { display: none; }
 /* portrait: dpad drawn at 210 but laid out as 184 so the skills/attack don't move; it sinks into the item pill's corner */
 body:not(.wide) #dpad { width: calc(210px * var(--s, 1)); height: calc(210px * var(--s, 1)); margin-right: calc(-26px * var(--s, 1)); margin-top: calc(-26px * var(--s, 1));
   left: calc(-5px * var(--s, 1)); top: calc(54px * var(--s, 1)); }
