@@ -218,7 +218,7 @@ async function boot() {
     await session!.key("5", true); await sleep(80); await session!.key("5", false);
     await sleep(250);
   }
-  fill.style.width = "100%";
+  fill.style.transition = "none"; fill.style.width = "100%";   // full the moment START shows, no tween left behind
   console.log(`boot: menu ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   startButton.disabled = false;
 }
@@ -260,7 +260,6 @@ window.addEventListener("blur", () => { held.clear(); dirs?.clear(); void sessio
 
 // save sheet
 const sheet = document.getElementById("save-sheet")!;
-const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
 document.getElementById("file-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
 // SAVE = the game's own 메뉴 → 시스템 → 세이브 → 예, typed for you behind a frozen copy of the screen; the freeze
@@ -290,16 +289,30 @@ document.addEventListener("contextmenu", (e) => e.preventDefault());
 document.addEventListener("selectstart", (e) => e.preventDefault());
 document.addEventListener("gesturestart", (e) => e.preventDefault());   // iOS pinch zoom (Safari ignores user-scalable=no)
 document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
-document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
+sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };   // tap outside the frame closes it
+// Small framed dialog over the FILE sheet; resolves with the class of the image button pressed (ok/yes/no/reload).
+const dlg = document.getElementById("dlg")!;
+const LABEL: Record<string, string> = { ok: "확인", yes: "예", no: "아니오", reload: "새로고침" };
+function ask(text: string, buttons: string[], err = false): Promise<string> {
+  dlg.querySelector("p")!.textContent = text;
+  dlg.classList.toggle("err", err);
+  const row = dlg.querySelector(".btns")!;
+  row.replaceChildren(...buttons.map((b) => Object.assign(document.createElement("button"), { type: "button", className: b, ariaLabel: LABEL[b] })));
+  dlg.hidden = false;
+  return new Promise((res) => row.querySelectorAll("button").forEach((btn) => { btn.onclick = () => { dlg.hidden = true; res(btn.className); }; }));
+}
+const BAD_FILE = "파일을 읽지 못했습니다.\n영웅서기2 세이브 파일이 맞는지\n확인해 주세요.";
+document.getElementById("save-export")!.onclick = () =>
+  exportSaves().then(() => ask("세이브 파일을 내려받았습니다.", ["ok"]), (e) => { console.warn(e); return ask(BAD_FILE, ["ok"], true); });
 document.getElementById("save-import")!.onclick = () => file.click();
-file.onchange = () => {
+file.onchange = async () => {
   const f = file.files?.[0];
-  if (!f) return;
-  importSaves(f).then((n) => {
-    msg.textContent = `${n}개 항목을 가져왔습니다. 새로고침하면 적용됩니다.`;
-    setTimeout(() => location.reload(), 1200);
-  }, fail);
   file.value = "";
+  if (!f || (await ask("지금 이 브라우저의 세이브를\n선택한 파일 내용으로 덮어씁니다.\n계속할까요?", ["no", "yes"])) !== "yes") return;
+  let n: number;
+  try { n = await importSaves(f); if (!n) throw new Error("no emulator entries in the file"); } catch (e) { console.warn(e); await ask(BAD_FILE, ["ok"], true); return; }
+  await ask(`${n}개 항목을 가져왔습니다.\n새로고침하면 적용됩니다.`, ["reload"]);
+  location.reload();
 };
 
 startButton.addEventListener("click", start, { once: true });

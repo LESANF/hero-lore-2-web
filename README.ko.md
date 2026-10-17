@@ -28,6 +28,9 @@
 > 어떤 형태로도 돈을 받지 않습니다. 게임의 권리는 원 개발사와 현 권리자에게 있습니다.
 > **권리자의 요청이 있거나 문제가 생기면 즉시 삭제합니다.**
 
+> [!NOTE]
+> **1편도 브라우저에서:** [영웅서기: 솔티아의 바람 리마스터 웹판 (hero-lord-web)](https://github.com/LESANF/hero-lord-web) · [바로 플레이](https://lesanf.github.io/hero-lord-web/)
+
 <div align="center">
 
 <table>
@@ -43,15 +46,6 @@
 </div>
 
 ---
-
-## 핸즈온 모바일 코리아의 작품입니다
-
-> **〈영웅서기 2: 빙해의 검사〉(Heroes Lore: Knight of Frozen Sea, 2007)는 핸즈온 모바일 코리아(전 엠포마 코리아,
-> 이후 EA 모바일)가 만든 게임입니다.** 이 저장소는 출시된 휴대폰 버전을 브라우저에서 돌리는 도구일 뿐이며,
-> 게임의 그래픽·사운드·스크립트·데이터·기획은 여기서 만든 것이 아닙니다.
-
-- **라이브:** 로컬 테스트 중이라 잠시 내려 두었습니다 (다시 열면 https://lesanf.github.io/hero-lore-2-web/)
-- **1편 웹판:** [hero-lord-web](https://github.com/LESANF/hero-lord-web)
 
 ## 이 포팅에서 개선한 것
 

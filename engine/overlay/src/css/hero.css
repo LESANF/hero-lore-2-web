@@ -133,11 +133,30 @@ body.menu #pad .potion, body.menu #pad .map, body.menu #pad .swap, body.dialogue
 
 
 /* save sheet */
-#save-sheet { position: fixed; inset: 0; z-index: 7; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.55); }
-#save-sheet[hidden] { display: none; }
-#save-sheet .card { width: min(88vw, 360px); padding: 20px 20px 14px; border-radius: 14px; background: #f7f3ea; color: #3a2f2a; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
-#save-sheet h2 { margin: 0 0 8px; font-size: 18px; }
-#save-sheet p { margin: 0 0 14px; font-size: 13px; line-height: 1.5; }
-#save-sheet button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: 2px solid #2b4a8a; background: #fff; color: #1b2a4a; font: 700 15px/1 system-ui, sans-serif; cursor: pointer; }
-#save-sheet button.ghost { border-color: transparent; background: transparent; font-weight: 600; }
-#save-msg { min-height: 1.2em; color: #2b4a8a; }
+/* FILE sheet and its small dialogs: the pad's gold frame (9-slice), image buttons, the game's own font */
+@font-face { font-family: "neodgm"; src: url(../../../assets/neodgm.ttf); }   /* the same file the engine gets */
+#save-sheet, .dlg { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+#save-sheet { z-index: 7; background: rgba(0,0,0,.6); }
+.dlg { z-index: 9; background: rgba(0,0,0,.55); }
+#save-sheet[hidden], .dlg[hidden] { display: none; }
+#save-sheet .card, .dlg .card { position: relative; box-sizing: border-box; padding: 0 4px 6px;
+  border: 36px solid transparent; border-image: url(../assets/pad/popup/popup-frame.png) 72 fill / 36px stretch;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,.7)); color: #efe0b0; text-align: center; font-family: "neodgm", monospace; word-break: keep-all; }
+#save-sheet .card { width: min(88vw, 360px); }
+.dlg .card { width: min(90vw, 350px); }
+#save-sheet h2 { height: 30px; margin: 0 0 12px; font-size: 0; background: url(../assets/pad/txt-file.png) center / contain no-repeat; }
+#save-sheet p { margin: 0 0 16px; font-size: 16px; line-height: 1.4; }
+#save-export, #save-import { display: block; width: min(240px, 100%); aspect-ratio: 560 / 128; margin: 10px auto; padding: 0; border: 0;
+  font-size: 0; background: center / 100% 100% no-repeat; cursor: pointer; filter: drop-shadow(0 3px 4px rgba(0,0,0,.6)); }
+#save-export { background-image: url(../assets/pad/popup/btn-export@2x.png); }
+#save-import { background-image: url(../assets/pad/popup/btn-import@2x.png); }
+#save-close { position: absolute; top: -48px; right: -48px; width: 40px; height: 40px; padding: 0; border: 0; font-size: 0; cursor: pointer;
+  background: url(../assets/pad/popup/btn-close.png) center / 100% 100% no-repeat; }
+.dlg p { margin: 8px 0 14px; font: 15px/1.5 "neodgm", monospace; white-space: pre-line; }
+.dlg.err p { color: #ffbe96; }
+.dlg .btns { display: flex; justify-content: center; gap: 12px; }
+.dlg .btns button { width: 124px; aspect-ratio: 560 / 128; border: 0; padding: 0; font-size: 0; background: center / 100% 100% no-repeat; cursor: pointer; }
+.dlg .btns button:only-child { width: 170px; }
+.dlg .btns .ok { background-image: url(../assets/pad/popup/btn-ok@2x.png); } .dlg .btns .yes { background-image: url(../assets/pad/popup/btn-yes@2x.png); }
+.dlg .btns .no { background-image: url(../assets/pad/popup/btn-no@2x.png); } .dlg .btns .reload { background-image: url(../assets/pad/popup/btn-reload@2x.png); }
+#save-export:active, #save-import:active, #save-close:active, .dlg .btns button:active { filter: brightness(.85) drop-shadow(0 0 8px rgba(255,223,127,.9)); transform: translateY(2px); }
