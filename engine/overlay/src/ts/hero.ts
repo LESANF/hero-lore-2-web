@@ -11,6 +11,20 @@ const pkgParam = new URLSearchParams(location.search).get("pkg");
 const sameOrigin = (u: string) => { try { return new URL(u, location.href).origin === location.origin; } catch { return false; } };
 const GAME_URL = pkgParam && sameOrigin(pkgParam) ? pkgParam : "game/hero2.zip";
 
+// In-app browsers (Threads, Instagram, Facebook, KakaoTalk, Naver, Line...) show the page in a sheet that takes a
+// downward drag on a page scrolled to the very top as "close", cancelling the d-pad touch mid-drag. Keep the document
+// scrolled 120 px (everything on screen is position: fixed) so the sheet sees scrollable content and leaves the drag
+// to the page. Same guard as hero-lord-web.
+if (/Barcelona|Instagram|FBAN|FBAV|KAKAOTALK|NAVER\(inapp|Line\/|DaumApps|everytimeApp/i.test(navigator.userAgent)) {
+  const PAD = 120;
+  document.documentElement.classList.add("inapp");
+  document.body.style.height = `calc(100% + ${PAD}px)`;
+  const keep = () => { if (Math.abs(window.scrollY - PAD) > 1) window.scrollTo(0, PAD); };
+  window.addEventListener("scroll", keep, { passive: true });
+  window.addEventListener("resize", keep);
+  requestAnimationFrame(keep);
+}
+
 // Keypad codes the game reads (docs/01-analysis.md). Same hand positions as hero-lord-web.
 const KEY_MAP: Record<string, string> = {
   KeyW: "2", ArrowUp: "2", KeyA: "4", ArrowLeft: "4", KeyD: "6", ArrowRight: "6", KeyS: "8", ArrowDown: "8",
