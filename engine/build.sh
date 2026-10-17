@@ -17,9 +17,10 @@ if [ "$(git -C build/wie rev-parse HEAD 2>/dev/null || true)" != "$COMMIT" ]; th
   git -C build/wie fetch -q --depth 1 origin "$COMMIT"
   git -C build/wie checkout -q "$COMMIT"
 fi
-git -C build/wie checkout -q -- wie-web/src/ts/midi.ts wie-skvm/src/classes/com/xce/lcdui/x_display.rs wie-web/src/ts/backend/wasm.ts wie-backend/src/executor.rs wie-web/src/rust/filesystem.rs   # undo our edits before re-applying
+git -C build/wie checkout -q -- wie-web/src/ts/midi.ts wie-skvm/src/classes/com/xce/lcdui/x_display.rs wie-web/src/ts/backend/wasm.ts wie-backend/src/executor.rs wie-web/src/rust/filesystem.rs wie-skvm/src/classes/net/wie/wie_audio_clip.rs   # undo our edits before re-applying
 # engine/patches: XDisplay reports the real screen size (wie hardcodes 240x320), canvas size from data-w/h
 git -C build/wie apply ../../engine/patches/screen-size.patch
+git -C build/wie apply ../../engine/patches/skt-audio-clip.patch   # com.skt.m.AudioClip plays MMF through the SMAF player (stubs upstream)
 git -C build/wie apply ../../engine/patches/fs-cache.patch          # file reads served from memory, not one IndexedDB round trip per read
 
 # Overlay: our page, entry config, and two one-line sed patches so the bundle works under a sub-path
