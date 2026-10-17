@@ -160,7 +160,7 @@ const KEY_CLICK = (key: string, down: boolean) => {
 // Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
 // tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
 // gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
-const S_MIN = 0.7, PAD_H = 350;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
+const S_MIN = 0.7, PAD_H = 350, PAD_W = 525;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
 function layout(w: number, h: number) {
   const cs = getComputedStyle(document.documentElement);
   const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
@@ -173,9 +173,10 @@ function layout(w: number, h: number) {
     gameW = wideW;
     s = Math.min(1.6, (gutter - 40) / 300, vh / 470);       // right gutter holds skills + attack: 278 design px wide
   } else {
-    const sMin = vw > 480 ? 0.9 : S_MIN;           // phones: full-width game first; wider (foldable open, square windows): keep the pad big
+    // PAD_W: the 440-wide layout at s 0.84 (docs: layout-target-440x880). Never wider than that, or the big dpad runs into the skills.
+    const sMin = Math.min(vw > 480 ? 0.9 : S_MIN, vw / PAD_W);   // phones: full-width game first; wider (foldable open, square windows): keep the pad big
     gameW = Math.min(vw, Math.floor((vh - PAD_H * sMin) / ratio));
-    s = Math.max(sMin, Math.min(1.3, vw / 393, (vh - gameW * ratio) / PAD_H));
+    s = Math.max(sMin, Math.min(1.3, vw / PAD_W, (vh - gameW * ratio) / PAD_H));
   }
   gameW = Math.max(gameW, 160);
   const root = document.documentElement.style;
