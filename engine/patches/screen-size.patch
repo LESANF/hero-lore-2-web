@@ -1,0 +1,42 @@
+diff --git a/wie-skvm/src/classes/com/xce/lcdui/x_display.rs b/wie-skvm/src/classes/com/xce/lcdui/x_display.rs
+index 5371bb6..14b8428 100644
+--- a/wie-skvm/src/classes/com/xce/lcdui/x_display.rs
++++ b/wie-skvm/src/classes/com/xce/lcdui/x_display.rs
+@@ -38,13 +38,17 @@ impl XDisplay {
+         }
+     }
+ 
+-    async fn cl_init(jvm: &Jvm, _: &mut WieJvmContext) -> JvmResult<()> {
++    async fn cl_init(jvm: &Jvm, context: &mut WieJvmContext) -> JvmResult<()> {
+         tracing::debug!("com.xce.lcdui.XDisplay::<clinit>()");
+ 
+-        // TODO: temp
+-        jvm.put_static_field("com/xce/lcdui/XDisplay", "width", "I", 240).await?;
+-        jvm.put_static_field("com/xce/lcdui/XDisplay", "height", "I", 320).await?;
+-        jvm.put_static_field("com/xce/lcdui/XDisplay", "height2", "I", 320).await?;
++        // hero-lore-2-web: report the real screen size instead of a fixed 240x320
++        let (width, height) = {
++            let screen = context.system().platform().screen();
++            (screen.width() as i32, screen.height() as i32)
++        };
++        jvm.put_static_field("com/xce/lcdui/XDisplay", "width", "I", width).await?;
++        jvm.put_static_field("com/xce/lcdui/XDisplay", "height", "I", height).await?;
++        jvm.put_static_field("com/xce/lcdui/XDisplay", "height2", "I", height).await?;
+ 
+         Ok(())
+     }
+diff --git a/wie-web/src/ts/backend/wasm.ts b/wie-web/src/ts/backend/wasm.ts
+index 2b91ccb..79554f3 100644
+--- a/wie-web/src/ts/backend/wasm.ts
++++ b/wie-web/src/ts/backend/wasm.ts
+@@ -19,8 +19,8 @@ export const startWasmSession = (
+ ): WasmSession => {
+   if (rustPanic) throw rustPanic;
+   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+-  canvas.width = 240;
+-  canvas.height = 320;
++  canvas.width = Number(canvas.dataset.w) || 240;
++  canvas.height = Number(canvas.dataset.h) || 320;
+   const audio = host?.audio ?? new AudioPlayer();
+   let emulator: WieWeb;
+   try {

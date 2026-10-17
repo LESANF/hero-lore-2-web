@@ -59,19 +59,28 @@ const assets = Promise.all([
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const probe = document.createElement("canvas");
-probe.width = 67; probe.height = 1;
 const probeCtx = probe.getContext("2d", { willReadFrequently: true })!;
-// The title menu is the only boot screen with the gold option box: its border is a solid bright
-// run at x 87..153 on rows 228 and 242 (measured from canvas dumps of every boot state).
+// The title menu is the only boot screen with the gold option box: a solid bright border run of
+// 67px on two rows 14 apart, in the lower part of the screen. Position depends on the screen size
+// (the game centres it), so scan for the pair instead of fixed coordinates.
 function menuUp(): boolean {
-  for (const y of [228, 242]) {
-    probeCtx.drawImage(canvas, 87, y, 67, 1, 0, 0, 67, 1);
-    const d = probeCtx.getImageData(0, 0, 67, 1).data;
-    let n = 0;
-    for (let i = 0; i < d.length; i += 4) if (d[i] + d[i + 1] + d[i + 2] > 300) n++;
-    if (n < 55) return false;
+  const w = canvas.width, h = canvas.height;
+  const y0 = Math.floor(h * 0.55), y1 = Math.floor(h * 0.9);
+  probe.width = w; probe.height = y1 - y0;
+  probeCtx.drawImage(canvas, 0, y0, w, y1 - y0, 0, 0, w, y1 - y0);
+  const d = probeCtx.getImageData(0, 0, w, y1 - y0).data;
+  // a row counts as a border row when some 70px window holds 55+ bright pixels (the border has a few dark
+  // pixels in it, so a contiguous run would be too strict; text never gets that dense)
+  const solid: boolean[] = [];
+  const pre = new Int32Array(w + 1);
+  for (let y = 0; y < y1 - y0; y++) {
+    for (let x = 0; x < w; x++) { const p = (y * w + x) * 4; pre[x + 1] = pre[x] + (d[p] + d[p + 1] + d[p + 2] > 300 ? 1 : 0); }
+    let best = 0;
+    for (let x = 70; x <= w; x++) best = Math.max(best, pre[x] - pre[x - 70]);
+    solid.push(best >= 55 && pre[w] <= 90);
   }
-  return true;
+  for (let y = 0; y + 14 < solid.length; y++) if (solid[y] && solid[y + 14]) return true;
+  return false;
 }
 
 let session: WasmSession | undefined;
@@ -84,6 +93,9 @@ async function boot() {
   fill.style.width = "85%";
   setMasterVolume(0.5);
   setPcmVolume(0.5);
+  // Experiment: `?w=&h=` sets the emulated screen size (wie's XDisplay now reports the canvas size).
+  const q = new URLSearchParams(location.search);
+  if (q.get("w")) { canvas.dataset.w = q.get("w")!; canvas.dataset.h = q.get("h")!; canvas.style.aspectRatio = `${q.get("w")} / ${q.get("h")}`; document.body.classList.add("fill"); }
   const ready = new Promise<void>((resolve) => {
     session = startWasmSession("hero2.zip", game, font, (event: SessionEvent) => {
       if (event.type === "ready") resolve();
