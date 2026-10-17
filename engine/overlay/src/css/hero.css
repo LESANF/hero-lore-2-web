@@ -83,10 +83,12 @@ body.hud #pad .item.on::after { display: none; }
 #save-pad { flex: 0 0 auto; width: calc(90px * var(--s, 1)); height: calc(24px * var(--s, 1)); padding: 0; border: 0;
   background: url(../assets/pad/txt-save.png) center / 100% 100% no-repeat; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); cursor: pointer; }
 #save-pad:active { filter: brightness(.7); transform: translateY(2px); }
-#pad .save-col { display: flex; flex-direction: column; align-items: center; gap: calc(3px * var(--s, 1)); }
-#file-pad { padding: calc(2px * var(--s, 1)) calc(8px * var(--s, 1)); border: 0; background: none; cursor: pointer;
-  font: 700 calc(14px * var(--s, 1))/1 Copperplate, "Copperplate Gothic Bold", Georgia, serif; letter-spacing: .14em; color: #c9a24a; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
-#file-pad:active { filter: brightness(.7); transform: translateY(1px); }
+#pad .save-col { display: flex; flex-direction: row; align-items: center; gap: calc(28px * var(--s, 1)); }   /* portrait: SAVE  FILE */
+body.wide #pad .save-col { flex-direction: column; gap: calc(10px * var(--s, 1)); }                          /* wide: SAVE over FILE */
+#file-pad { flex: 0 0 auto; width: calc(75px * var(--s, 1)); height: calc(24px * var(--s, 1)); padding: 0; border: 0;
+  font-size: 0; color: transparent; background: url(../assets/pad/txt-file.png) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); cursor: pointer; }
+#file-pad:active { filter: brightness(.7); transform: translateY(2px); }
 #save-pad.busy { filter: brightness(.6); pointer-events: none; }
 
 /* wide: one grid over the whole window, the game in the middle column at full height; the pad and its
