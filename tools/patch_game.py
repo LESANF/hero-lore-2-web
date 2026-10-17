@@ -21,6 +21,11 @@ PATCHES = [
     ("bg.class", "1009b7", "1006b7", "title menu: 6 items (새로하기 이어하기 환경설정 도움말 네트워크창고 네트워크대전); drops 선물하기/껨존가기 (WAP) and 게임종료"),
     ("bg.class", "b400149a001a", "b40014570000", "title menu 네트워크창고: always the message popup (getfield a; ifne -> pop; nop nop)"),
     ("bg.class", "1032b6", "1006b6", "title menu 네트워크창고: popup text = com.tdf #6 (was #50 캐릭터가 없습니다)"),
+    ("ah.class", "1c057004a0000b2a1bb50058a700092a1b74b50058b1", "2a1b057a1c0570049f0004 74b50058000000000000b1".replace(" ", ""),
+     "screen shake X at quarter amplitude (ah.a(amp, frame): b = odd ? amp>>2 : -(amp>>2)); boss/skill quakes were dizzying (amps 4-5 -> 1)"),
+    ("ah.class", "1c057004a0000b2a1bb50062a700092a1b74b50062b1", "2a1b057a1c0570049f000474b50062000000000000b1",
+     "screen shake Y at quarter amplitude (ah.b, same rewrite, field c)"),
+    ("ae.class", "10fb08b80098", "10ff04b80098", "script quake (event 34): random offsets f.a(-5, 5) -> f.a(-1, 1)"),
     ("bg.class", "00000073000000a1", "0000007300000073", "title menu 네트워크대전: tableswitch case 5 -> case 4 code (same popup)"),
 ]
 
