@@ -8,6 +8,11 @@ import commonConfig from "./webpack.config.common.ts";
 
 const base = commonConfig("production");
 base.plugins = (base.plugins ?? []).filter(p => !(p instanceof HtmlBundlerPlugin));
+// wie names images assets/img/[name][ext]; ours change in place (pad art), so hash them or a browser keeps the old ones
+for (const rule of base.module?.rules ?? []) {
+  const r = rule as webpack.RuleSetRule;
+  if (r.type === "asset/resource" && String(r.test).includes("png")) r.generator = { ...r.generator, filename: "assets/img/[name].[contenthash:8][ext]" };
+}
 base.plugins.push(
   new webpack.DefinePlugin({ __APP_VERSION__: JSON.stringify(process.env.HERO_VERSION ?? "dev") }),
   new HtmlBundlerPlugin({

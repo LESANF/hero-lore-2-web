@@ -16,25 +16,37 @@
 <body>
 <div id="col">
   <div id="stage"><canvas id="canvas" width="240" height="320"></canvas></div>
-  <div id="pad"><div id="pad-inner">
+  <div id="pad">
     <div class="divider"></div>
-    <button class="key pill map" data-key="*"><small>;</small></button>
-    <button class="key pill menu" data-key="CLR"><small>ESC</small></button>
-    <button id="save-pad" type="button" aria-label="세이브"></button>
-    <div id="dpad">
-      <span class="arm up" data-dir="2"><small>W</small></span><span class="arm left" data-dir="4"><small>A</small></span>
-      <span class="arm right" data-dir="6"><small>D</small></span><span class="arm down" data-dir="8"><small>S</small></span>
+    <div class="row top">
+      <button class="key pill map" data-key="*"><small>;</small></button>
+      <button id="save-pad" type="button" aria-label="세이브"></button>
+      <button class="key pill menu" data-key="CLR"><small>ESC</small></button>
     </div>
-    <button class="key skill s1" data-key="1"><small>U</small><canvas class="mirror" data-slot="1" width="12" height="12"></canvas></button>
-    <button class="key skill s3" data-key="3"><small>I</small><canvas class="mirror" data-slot="3" width="12" height="12"></canvas></button>
-    <button class="key skill s7" data-key="7"><small>J</small><canvas class="mirror" data-slot="7" width="12" height="12"></canvas></button>
-    <button class="key skill s9" data-key="9"><small>K</small><canvas class="mirror" data-slot="9" width="12" height="12"></canvas></button>
-    <button class="key attack" data-key="5"><small>SPACE</small></button>
-    <button class="key item potion" data-key="0"><small>O</small><canvas class="mirror" data-slot="0" width="13" height="12"></canvas></button>
-    <button class="key pill swap" data-key="#"><small>P</small><i class="tag">스킵</i></button>
-  </div></div>
+    <div class="row mid">
+      <div id="dpad">
+        <span class="arm up" data-dir="2"><small>W</small></span><span class="arm left" data-dir="4"><small>A</small></span>
+        <span class="arm right" data-dir="6"><small>D</small></span><span class="arm down" data-dir="8"><small>S</small></span>
+      </div>
+      <div class="cluster">
+        <div class="skills">
+          <button class="key skill s1" data-key="1"><small>U</small><canvas class="mirror" data-slot="1" width="21" height="16"></canvas></button>
+          <button class="key skill s3" data-key="3"><small>I</small><canvas class="mirror" data-slot="3" width="21" height="16"></canvas></button>
+          <button class="key skill s7" data-key="7"><small>J</small><canvas class="mirror" data-slot="7" width="21" height="16"></canvas></button>
+          <button class="key skill s9" data-key="9"><small>K</small><canvas class="mirror" data-slot="9" width="21" height="16"></canvas></button>
+        </div>
+        <div class="atk">
+          <button class="key attack" data-key="5"><small>SPACE</small></button>
+          <button class="key back" data-key="CLR" aria-label="뒤로"><small>Backspace</small></button>
+        </div>
+      </div>
+    </div>
+    <div class="row bot">
+      <button class="key pill item potion" data-key="0"><small>O</small><canvas class="mirror" data-slot="0" width="13" height="12"></canvas></button>
+      <button class="key pill swap" data-key="#"><small>P</small><i class="tag">스킵</i></button>
+    </div>
+  </div>
 </div>
-<button id="save-toggle" class="pill" type="button">세이브</button>
 <div id="save-sheet" hidden>
   <div class="card">
     <h2>세이브</h2>

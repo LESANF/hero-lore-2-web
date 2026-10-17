@@ -86,29 +86,36 @@ function menuUp(): boolean {
 }
 
 // Dialogue box = two full-width gold border rows 34px apart in the lower third (measured 255/289 on
-// 240x320). While it is up, # means 스킵, so the pad relabels that button.
+// 240x320), with a mostly dark text area between them (town stone walls also give bright full rows).
+// While it is up, # means 스킵, so the pad relabels that button.
 function dialogueUp(): boolean {
   const w = canvas.width, h = canvas.height;
   const y0 = Math.floor(h * 0.6);
   probe.width = w; probe.height = h - y0;
   probeCtx.drawImage(canvas, 0, y0, w, h - y0, 0, 0, w, h - y0);
   const d = probeCtx.getImageData(0, 0, w, h - y0).data;
-  const full: boolean[] = [];
+  const lit: number[] = [];
   for (let y = 0; y < h - y0; y++) {
     let n = 0;
     for (let x = 0; x < w; x++) { const p = (y * w + x) * 4; if (d[p] + d[p + 1] + d[p + 2] > 300) n++; }
-    full.push(n >= w * 0.8);
+    lit.push(n);
   }
-  for (let y = 0; y + 34 < full.length; y++) if (full[y] && full[y + 34]) return true;
+  for (let y = 0; y + 34 < lit.length; y++) {
+    if (lit[y] < w * 0.8 || lit[y + 34] < w * 0.8) continue;
+    let dark = 0;
+    for (let r = y + 3; r <= y + 31; r++) if (lit[r] < w * 0.25) dark++;   // text rows stay well under a quarter lit
+    if (dark >= 29 * 0.8) return true;
+  }
   return false;
 }
 
-// HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom (box
-// interiors measured on 240x320: y 302..314, x 61/84/105/126 for skills 1/3/7/9, 147 for the item,
-// anchored to the bottom edge). Copy them onto the pad buttons every frame while the bar is present.
-// icon interiors only: from y = h - 17, 12 rows. Skills 12x12, item = potion + count as one 13x12 (CROSSCHECK.md)
-const SLOTS: Record<string, [number, number]> = { "1": [68, 12], "3": [90, 12], "7": [111, 12], "9": [132, 12], "0": [156, 13] };
-const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!] }));
+// HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom, anchored to
+// the bottom edge (measured on 240x320). Skills: the whole 21x16 slot (box + number + icon) at x
+// 60/82/104/126 (left border column included; the handoff said 61, one px short), y h-19, shown as is;
+// empty = fewer than 4 bright pixels in the icon area (x 8..19, y 2..13). Item: potion + count as one 13x12 at x 156, y h-17, pure black dropped (HANDOFF-FINAL.md).
+const SLOTS: Record<string, [number, number, number, number]> = {
+  "1": [60, 19, 21, 16], "3": [82, 19, 21, 16], "7": [104, 19, 21, 16], "9": [126, 19, 21, 16], "0": [156, 17, 13, 12] };
+const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!], item: m.dataset.slot === "0" }));
 function hudBarUp(): boolean {
   const h = canvas.height;
   probe.width = 2; probe.height = 1;
@@ -122,19 +129,18 @@ function mirrorHud() {
   const up = hudBarUp();
   document.body.classList.toggle("hud", up);
   if (up) {
-    const sy = canvas.height - 17;
     for (const m of mirrors) {
-      const [sx, w] = m.src;
-      m.ctx.clearRect(0, 0, w, 12);
-      m.ctx.drawImage(canvas, sx, sy, w, 12, 0, 0, w, 12);
-      const img = m.ctx.getImageData(0, 0, w, 12), d = img.data;
+      const [sx, dy, w, h] = m.src;
+      m.ctx.clearRect(0, 0, w, h);
+      m.ctx.drawImage(canvas, sx, canvas.height - dy, w, h, 0, 0, w, h);
+      const img = m.ctx.getImageData(0, 0, w, h), d = img.data;
       let lit = 0;
-      for (let i = 0; i < d.length; i += 4) {
-        const sum = d[i] + d[i + 1] + d[i + 2];
-        if (sum === 0) d[i + 3] = 0;          // slot background is pure black, icons never are: drop the black square
-        else if (sum > 300) lit++;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4, sum = d[i] + d[i + 1] + d[i + 2];
+        if (m.item) { if (sum === 0) d[i + 3] = 0; else if (sum > 300) lit++; }   // item: drop the black square
+        else if (x >= 8 && x <= 19 && y >= 2 && y <= 13 && sum > 300) lit++;
       }
-      m.ctx.putImageData(img, 0, 0);
+      if (m.item) m.ctx.putImageData(img, 0, 0);
       m.ctx.canvas.closest(".key")!.classList.toggle("on", lit >= 4);   // slot has something registered
     }
   }
@@ -150,6 +156,35 @@ const KEY_CLICK = (key: string, down: boolean) => {
   void session?.key(key, down).catch(fail);
 };
 
+// Layout: sizes are design px times --s (the 393-wide pad design), so the whole pad scales together.
+// Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
+// tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
+// gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
+const S_MIN = 0.7, PAD_H = 350, PAD_W = 525;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
+function layout(w: number, h: number) {
+  const cs = getComputedStyle(document.documentElement);
+  const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
+  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight - sat - sab;
+  const ratio = h / w;
+  let gameW: number, s: number;
+  const wideW = Math.floor(vh / ratio), gutter = (vw - wideW) / 2;
+  const wide = gutter >= 200;
+  if (wide) {
+    gameW = wideW;
+    s = Math.min(1.6, (gutter - 40) / 300, vh / 470);       // right gutter holds skills + attack: 278 design px wide
+  } else {
+    // PAD_W: the 440-wide layout at s 0.84 (docs: layout-target-440x880). Never wider than that, or the big dpad runs into the skills.
+    const sMin = Math.min(vw > 480 ? 0.9 : S_MIN, vw / PAD_W);   // phones: full-width game first; wider (foldable open, square windows): keep the pad big
+    gameW = Math.min(vw, Math.floor((vh - PAD_H * sMin) / ratio));
+    s = Math.max(sMin, Math.min(1.3, vw / PAD_W, (vh - gameW * ratio) / PAD_H));
+  }
+  gameW = Math.max(gameW, 160);
+  const root = document.documentElement.style;
+  document.body.classList.toggle("wide", wide);
+  root.setProperty("--game-w", `${gameW}px`); root.setProperty("--game-h", `${Math.round(gameW * ratio)}px`); root.setProperty("--s", s.toFixed(3));
+  console.log(`hero-lore-2-web ${__APP_VERSION__}: screen ${w}x${h}, ${wide ? "wide" : "portrait"} game ${gameW}px, pad x${s.toFixed(2)}, viewport ${vw}x${vh}`);
+}
+
 async function boot() {
   startButton.disabled = true;
   const t0 = performance.now();
@@ -158,33 +193,13 @@ async function boot() {
   console.log(`boot: assets ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   setMasterVolume(0.5);
   setPcmVolume(0.5);
-  // Layout (docs/04-pad-assets.md): one column, game at native 240x320 scaled to the column width,
-  // the control pad below gets the rest. The pad content is a 393x304 design scaled by --ps = col/393,
-  // so the column shrinks when the viewport is too short to hold game + pad + safe areas.
-  // Read once: the game reads XDisplay once at boot. `?w=&h=` still overrides the emulated size.
-  const cs = getComputedStyle(document.documentElement);
-  const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
-  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-  let col = Math.min(vw, 430);
-  for (let i = 0; i < 3; i++) {                     // col depends on the pad scale which depends on col
-    const padH = 304 * Math.min(1.1, col / 393) + sab;
-    col = Math.min(col, Math.floor((vh - sat - padH) * 240 / 320));
-  }
-  col = Math.max(col, 240);
+  // Emulated screen size: read once, the game reads XDisplay once at boot. `?w=&h=` overrides it.
   const q = new URLSearchParams(location.search);
   let w = Number(q.get("w")), h = Number(q.get("h"));
   if (!(w > 0 && h > 0)) { w = 240; h = 320; }
-  const gameH = Math.round(col * 320 / 240);
-  const padH = Math.max(0, vh - sat - sab - gameH);
-  const ps = Math.min(1.1, col / 393, padH / 304);
-  const ex = Math.min(140, Math.max(0, padH / ps - 304));          // spread the rows over extra height, up to a point
-  const padTop = Math.max(0, (padH - (304 + ex) * ps) / 2);         // then centre the block in what is left
-  const root = document.documentElement.style;
-  root.setProperty("--col", `${col}px`); root.setProperty("--ps", String(ps));
-  root.setProperty("--ex", `${ex.toFixed(1)}px`); root.setProperty("--pad-top", `${padTop.toFixed(1)}px`);
   canvas.dataset.w = String(w); canvas.dataset.h = String(h);
-  canvas.style.aspectRatio = `${w} / ${h}`;
-  console.log(`hero-lore-2-web ${__APP_VERSION__}: screen ${w}x${h}, column ${col}px, pad ${padH}px x${ps.toFixed(2)} ex ${ex.toFixed(0)}, viewport ${vw}x${vh}`);
+  layout(w, h);
+  window.addEventListener("resize", () => layout(w, h));   // rotation, window resize, browser bars
   const ready = new Promise<void>((resolve) => {
     session = startWasmSession("hero2.zip", game, font, (event: SessionEvent) => {
       if (event.type === "ready") resolve();
@@ -212,6 +227,9 @@ async function boot() {
 
 function start() {
   started = true;
+  // iOS 17+: "playback" keeps Web Audio audible with the ring/silent switch on silent (default "auto" mutes it)
+  const nav = navigator as Navigator & { audioSession?: { type: string } };
+  if (nav.audioSession) nav.audioSession.type = "playback";
   void audioReady?.then((state) => state?.ctx.resume());   // the gesture that unlocks sound
   landing.classList.add("done");
   document.body.classList.add("ready");
@@ -246,8 +264,11 @@ window.addEventListener("blur", () => { held.clear(); dirs?.clear(); void sessio
 const sheet = document.getElementById("save-sheet")!;
 const msg = document.getElementById("save-msg")!;
 const file = document.getElementById("save-file") as HTMLInputElement;
-document.getElementById("save-toggle")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
-document.getElementById("save-pad")!.onclick = () => document.getElementById("save-toggle")!.click();
+document.getElementById("save-pad")!.onclick = () => { sheet.hidden = false; void session?.releaseKeys(); };
+// long press anywhere would open the page's context menu / image callout; this is a game screen
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+document.addEventListener("selectstart", (e) => e.preventDefault());
+document.addEventListener("gesturestart", (e) => e.preventDefault());   // iOS pinch zoom (Safari ignores user-scalable=no)
 document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
 document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
 document.getElementById("save-import")!.onclick = () => file.click();

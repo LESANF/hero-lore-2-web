@@ -54,6 +54,7 @@ export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLE
     button.addEventListener("pointercancel", up);
     button.addEventListener("lostpointercapture", up);
     button.addEventListener("contextmenu", (e) => e.preventDefault());
+    button.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });   // iOS double-tap zoom / loupe; pointer events still fire
   }
 
   // d-pad: 4-way from the angle to the centre, small dead zone in the hub
@@ -85,6 +86,7 @@ export function mountInput(session: PlayerSession, pad: HTMLElement, dpad: HTMLE
   dpad.addEventListener("pointercancel", end);
   dpad.addEventListener("lostpointercapture", end);
   dpad.addEventListener("contextmenu", (e) => e.preventDefault());
+  dpad.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
 
   window.addEventListener("blur", () => { held.clear(); dir = ""; pointer = -1; dirs.clear(); for (const a of arms.values()) a.classList.remove("on"); void session.releaseKeys(); });
 }
