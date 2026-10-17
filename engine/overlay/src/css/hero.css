@@ -101,10 +101,12 @@ body.wide #pad .pill, body.wide #dpad, body.wide #save-pad, body.wide #pad .clus
 body.dialogue #pad .swap .tag { display: block; }
 body.menu #pad .potion, body.menu #pad .map, body.menu #pad .swap, body.dialogue #pad .potion, body.dialogue #pad .map { opacity: .45; }
 
-/* landing: night sky, logo, START (LOADING while disabled; the words are in the images), framed progress bar */
+/* landing: official art backdrop (pre-blended into navy), logo, START (LOADING while disabled; the words are in the images), framed progress bar */
 #landing { position: fixed; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px;
   padding: 0 24px; box-sizing: border-box; color: #fff; text-align: center; overflow: hidden; transition: opacity .6s ease;
-  background: radial-gradient(ellipse at 50% 30%, #24407a 0%, #0f1b3d 45%, #060a16 100%); }
+  background: url(../assets/landing/bg-landing.jpg) center top / cover no-repeat, linear-gradient(#12204a, #060a1a); }
+/* PC / landscape: the art fits the height in the middle; its edges fade into the same navy as the sides */
+@media (min-aspect-ratio: 3/4) { #landing { background-size: auto 100%, auto; } }
 #landing.done { opacity: 0; pointer-events: none; }
 #landing > * { position: relative; }
 #logo { width: min(380px, 86vw); height: auto; margin-bottom: 10px; }
