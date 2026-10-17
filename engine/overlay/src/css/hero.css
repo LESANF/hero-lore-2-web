@@ -21,13 +21,14 @@ body:not(.ready) #pad { visibility: hidden; }
   background: #0d1020 url(../assets/pad/pad-tile.png) repeat; background-size: 128px 128px; }
 /* the ornament strip repeats across whatever width there is instead of stretching */
 #pad .divider { position: absolute; left: 0; right: 0; top: 0; height: calc(20px * var(--s, 1)); background: url(../assets/pad/pad-divider-tile.png) center top / auto 100% repeat-x; }
-#pad .row { width: 100%; max-width: calc(430px * var(--s, 1)); padding: 0 calc(6px * var(--s, 1)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; }
+#pad { --row-w: max(430px * var(--s, 1), 380px); }   /* small pads still spread to thumb reach */
+#pad .row { width: 100%; max-width: var(--row-w); padding: 0 calc(6px * var(--s, 1)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; }
 #pad .row.bot { justify-content: center; gap: calc(18px * var(--s, 1)); }
 #pad .cluster { display: flex; align-items: center; gap: calc(10px * var(--s, 1)); }
 /* nudge dpad out (and attack a little) past the row edge, never past the screen edge */
-body:not(.wide) #pad .row.mid { --edge: calc(max(0px, (100vw - 430px * var(--s, 1)) / 2) + 6px * var(--s, 1) - 4px); }
-body:not(.wide) #pad .row.mid #dpad { margin-left: calc(-1 * min(16px * var(--s, 1), var(--edge))); }
-body:not(.wide) #pad .row.mid .attack { margin-right: calc(-1 * min(6px * var(--s, 1), var(--edge))); }
+body:not(.wide) #pad .row.mid { --edge: calc(max(0px, (100vw - var(--row-w)) / 2) + 6px * var(--s, 1) - 4px); }
+body:not(.wide) #pad .row.mid #dpad { margin-left: calc(-1 * min(26px * var(--s, 1), var(--edge))); }
+body:not(.wide) #pad .row.mid .attack { margin-right: calc(-1 * min(12px * var(--s, 1), var(--edge))); }
 #pad .skills { display: grid; grid-template-columns: repeat(2, auto); gap: calc(12px * var(--s, 1)); }
 #pad .key { position: relative; flex: 0 0 auto; padding: 0; border: 0; background: transparent center / 100% 100% no-repeat; touch-action: none; user-select: none;
   -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
@@ -47,10 +48,10 @@ body:not(.wide) #pad .row.mid .attack { margin-right: calc(-1 * min(6px * var(--
 #pad .s3 { background-image: url(../assets/pad/hudbox/hudbox-empty-3.png); }
 #pad .s7 { background-image: url(../assets/pad/hudbox/hudbox-empty-7.png); }
 #pad .s9 { background-image: url(../assets/pad/hudbox/hudbox-empty-9.png); }
-#pad .attack { width: calc(84px * var(--s, 1)); height: calc(84px * var(--s, 1)); border-radius: 50%; background-image: url(../assets/pad/btn-attack.png); }
+#pad .attack { width: calc(94px * var(--s, 1)); height: calc(94px * var(--s, 1)); border-radius: 50%; background-image: url(../assets/pad/btn-attack.png); }
 #pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); }
 /* d-pad: one image; .arm spans are hit/highlight overlays, direction comes from the finger position */
-#dpad { position: relative; flex: 0 0 auto; width: calc(140px * var(--s, 1)); height: calc(140px * var(--s, 1)); background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
+#dpad { position: relative; flex: 0 0 auto; width: calc(156px * var(--s, 1)); height: calc(156px * var(--s, 1)); background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
   touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
 #dpad .arm { position: absolute; width: 31.4%; height: 31.4%; border-radius: 8px; pointer-events: none; }
 #dpad .up { left: 34.3%; top: 2.9%; } #dpad .left { left: 2.9%; top: 34.3%; } #dpad .right { left: 65.7%; top: 34.3%; } #dpad .down { left: 34.3%; top: 65.7%; }
