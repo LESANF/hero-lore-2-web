@@ -18,6 +18,7 @@
 | `bw.class` | `08 08 10 14 b6 00 1c` → `08 08 10 14 58 58 57` (drawImage → pop2 pop2 pop) | 타이틀 좌상단 "전체" 등급 배지 제거 | `bw.a(Graphics)`: `drawImage(as.o[2], 5, 5, 20)` |
 | `bw.class` | `10 1a 64 10 11 b6 00 1c` → `… 58 58 57` | 타이틀 하단 HANDS·ON MOBILE 로고 제거 | 같은 함수: `drawImage(as.o[0], i, h-26, 17)` |
 | `bw.class` | 상수 풀 Utf8 `V.1.0.2` → `V.<VERSION 파일>` | 타이틀 버전 표기가 우리 버전(지금 V.0.1.0). 길이가 달라도 됨 | 같은 함수: `bk.a(g, i, j+5, "V.1.0.2".getBytes(), 0, 1)` |
+| `ah.class` | `ah.a(II)V`, `ah.b(II)V` 본문 22바이트 재작성 (`1c 05 70 04 a0 … b1` → `2a 1b 04 7a 1c 05 70 04 9f 00 04 74 b5 … 00×6 b1`) | 화면 흔들림 진폭 절반 (보스 공격·스킬). 방향 교대는 그대로 | `ah.a(amp, frame)`: `this.b = frame%2==1 ? amp : -amp` (X), `ah.b`는 같은 식으로 Y(`this.c`). 호출처는 ac/an/ce(직업 스킬)·ar/be/bo(몬스터) |
 | `t/com.tdf` | 6번 레코드 "선물하기" → "준비중인 기능입니다;(LESANF)" | 위 팝업 문구. `;`는 줄바꿈 | 텍스트 테이블 형식: count u8, 레코드마다 len u16be + EUC-KR |
 
 ## 측정 (2026-10-16, 새로고침 뒤 시작하기 활성까지)
