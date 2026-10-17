@@ -1,12 +1,12 @@
 # hero-lore-2-web
 
+**English** | [한국어](README.ko.md)
+
 > [!IMPORTANT]
-> ## 팬메이드 · 광고 없음 · 수익 없음
-> **이 저장소는 개인이 만든 비공식 팬 프로젝트입니다.** 광고를 붙이지 않고, 어떤 형태로도 돈을 받지 않습니다.
-> 게임의 권리는 원 개발사와 현 권리자에게 있으며, **권리자의 요청이나 문제가 생기면 즉시 삭제합니다.**
->
-> **Unofficial fan project. No ads, no revenue of any kind.** All rights to the game belong to its developer and
-> current rights holder. **It will be taken down immediately on request or if any issue arises.**
+> ## Fan-made · No ads · No revenue
+> **This is an unofficial fan project.** It carries no ads and takes no money in any form.
+> All rights to the game belong to its developer and current rights holder.
+> **It will be taken down immediately on request or if any issue arises.**
 
 ## This game was made by Hands-On Mobile Korea
 
