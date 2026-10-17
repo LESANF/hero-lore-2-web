@@ -160,7 +160,7 @@ const KEY_CLICK = (key: string, down: boolean) => {
 // Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
 // tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
 // gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
-const S_MIN = 0.7, PAD_H = 270;                    // pad design height: divider 20 + top row + d-pad block + bottom row
+const S_MIN = 0.7, PAD_H = 300;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
 function layout(w: number, h: number) {
   const cs = getComputedStyle(document.documentElement);
   const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
@@ -267,6 +267,7 @@ document.getElementById("save-pad")!.onclick = () => { sheet.hidden = false; voi
 // long press anywhere would open the page's context menu / image callout; this is a game screen
 document.addEventListener("contextmenu", (e) => e.preventDefault());
 document.addEventListener("selectstart", (e) => e.preventDefault());
+document.addEventListener("gesturestart", (e) => e.preventDefault());   // iOS pinch zoom (Safari ignores user-scalable=no)
 document.getElementById("save-close")!.onclick = () => { sheet.hidden = true; };
 document.getElementById("save-export")!.onclick = () => exportSaves().then(() => { msg.textContent = "파일을 내려받았습니다."; }, fail);
 document.getElementById("save-import")!.onclick = () => file.click();
