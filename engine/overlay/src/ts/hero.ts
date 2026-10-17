@@ -218,7 +218,7 @@ async function boot() {
     await session!.key("5", true); await sleep(80); await session!.key("5", false);
     await sleep(250);
   }
-  fill.style.width = "100%";
+  fill.style.transition = "none"; fill.style.width = "100%";   // full the moment START shows, no tween left behind
   console.log(`boot: menu ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   startButton.disabled = false;
 }
