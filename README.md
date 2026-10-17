@@ -31,10 +31,14 @@
 > [!NOTE]
 > **Part 1 in the browser:** [영웅서기: 솔티아의 바람 리마스터 웹판 (hero-lord-web)](https://github.com/LESANF/hero-lord-web) · [play](https://lesanf.github.io/hero-lord-web/)
 
-> [!TIP]
-> **▶ [Play Video](docs/media/gameplay.mp4)** — 54 s of real play on an iPhone: equipment, 율리케, skill swap, 오딘 (no sound)
->
-> <a href="docs/media/gameplay.mp4"><img src="docs/img/play-thumb.jpg" width="320" alt="Play video: 오딘 boss fight" /></a>
+<div align="center">
+
+### ▶ Play Video
+
+<a href="docs/media/gameplay.mp4"><img src="docs/img/play.gif" width="300" alt="Play Video" /></a><br />
+<sub>Real play on an iPhone · highlights, no sound · <a href="docs/media/gameplay.mp4">full 54 s clip</a></sub>
+
+</div>
 
 <div align="center">
 
