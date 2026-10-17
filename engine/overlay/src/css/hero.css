@@ -20,7 +20,7 @@ body:not(.ready) #pad { visibility: hidden; }
 #pad .divider { position: absolute; left: 0; top: 0; width: 393px; height: 20px; background: url(../assets/pad/pad-divider.png) center / 100% 100% no-repeat; }
 #pad .key { position: absolute; padding: 0; border: 0; background: transparent center / 100% 100% no-repeat; touch-action: none; user-select: none;
   -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
-#pad .key.down { filter: brightness(.7); transform: translateY(2px); }
+#pad .key.down { filter: brightness(.85) drop-shadow(0 0 8px rgba(255,223,127,.9)); transform: translateY(2px); }
 #pad .key small, #dpad small { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 1px 4px; border-radius: 3px;
   background: rgba(20,16,10,.85); border: 1px solid #c9a24a; color: #efe0b0; font: 700 9px/1 ui-monospace, Menlo, monospace; pointer-events: none; }
 @media (pointer: coarse) { #pad .key small, #dpad small { display: none; } }   /* key hints only mean something with a keyboard */
@@ -28,42 +28,39 @@ body:not(.ready) #pad { visibility: hidden; }
 #pad .pill::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 32px; transform: translate(-50%, -50%); background: center / contain no-repeat; }
 #pad .map { left: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .map::after { background-image: url(../assets/pad/ico-map.png); }
 #pad .menu { right: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .menu::after { background-image: url(../assets/pad/ico-menu.png); }
-#pad .item { width: 58px; height: 58px; left: 111px; top: calc(251px + var(--ex, 0px) * .8); background-image: url(../assets/pad/btn-item.png); }
+#pad .item { left: 92px; top: calc(260px + var(--ex, 0px) * .8); } #pad .item::after { background-image: url(../assets/pad/ico-potion.png); }
 #pad .swap { left: 205px; top: calc(260px + var(--ex, 0px) * .8); } #pad .swap::after { background-image: url(../assets/pad/ico-swap.png); }
-#pad .skill { width: 58px; height: 58px; }
-#pad .s1 { left: 174px; top: calc(108px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-1.png); }
-#pad .s3 { left: 236px; top: calc(108px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-3.png); }
-#pad .s7 { left: 174px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-7.png); }
-#pad .s9 { left: 236px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-9.png); }
-#pad .attack { left: 300px; top: calc(125px + var(--ex, 0px) * .5); width: 88px; height: 88px; background-image: url(../assets/pad/btn-attack.png); }
-#pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); filter: none; transform: none; }
+/* skills 1/3/7/9: the game's own HUD slot (box + number + icon) copied at exactly 3x; empty -> drawn empty box */
+#pad .skill { width: 63px; height: 48px; image-rendering: pixelated; }
+#pad .s1 { left: 156px; top: calc(112px + var(--ex, 0px) * .5); background-image: url(../assets/pad/hudbox/hudbox-empty-1.png); }
+#pad .s3 { left: 231px; top: calc(112px + var(--ex, 0px) * .5); background-image: url(../assets/pad/hudbox/hudbox-empty-3.png); }
+#pad .s7 { left: 156px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/hudbox/hudbox-empty-7.png); }
+#pad .s9 { left: 231px; top: calc(172px + var(--ex, 0px) * .5); background-image: url(../assets/pad/hudbox/hudbox-empty-9.png); }
+#pad .attack { left: 304px; top: calc(124px + var(--ex, 0px) * .5); width: 84px; height: 84px; border-radius: 50%; background-image: url(../assets/pad/btn-attack.png); }
+#pad .attack.down { background-image: url(../assets/pad/btn-attack-pressed.png); }
 /* d-pad: one image; .arm spans are hit/highlight overlays, direction comes from the finger position */
-#dpad { position: absolute; left: 19px; top: calc(96px + var(--ex, 0px) * .5); width: 146px; height: 146px; background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
+#dpad { position: absolute; left: 8px; top: calc(96px + var(--ex, 0px) * .5); width: 140px; height: 140px; background: url(../assets/pad/dpad.png) center / 100% 100% no-repeat;
   touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
-#dpad .arm { position: absolute; width: 46px; height: 46px; border-radius: 8px; pointer-events: none; }
-#dpad .up { left: 50px; top: 4px; } #dpad .left { left: 4px; top: 50px; } #dpad .right { left: 96px; top: 50px; } #dpad .down { left: 50px; top: 96px; }
+#dpad .arm { position: absolute; width: 44px; height: 44px; border-radius: 8px; pointer-events: none; }
+#dpad .up { left: 48px; top: 4px; } #dpad .left { left: 4px; top: 48px; } #dpad .right { left: 92px; top: 48px; } #dpad .down { left: 48px; top: 92px; }
 #dpad .arm.on { background: rgba(239,224,176,.35); box-shadow: inset 0 0 10px rgba(239,224,176,.6); }
 #dpad .up small { top: -2px; } #dpad .down small { top: auto; bottom: -2px; } #dpad .left small { left: 2px; transform: none; } #dpad .right small { left: auto; right: 2px; transform: none; }
-/* HUD mirror: the game's own skill icons / item (potion + count) copied onto the buttons; black made
-   transparent, and a registered slot swaps the button to its *-on art (CROSSCHECK.md) */
-.mirror { position: absolute; image-rendering: pixelated; pointer-events: none; display: none; filter: drop-shadow(0 1px 0 rgba(0,0,0,.9)); }
+/* HUD mirror (HANDOFF-FINAL.md): skills show the whole slot as drawn by the game; the item pill shows
+   the potion + count with only pure black dropped, on the pill-item-on art */
+.mirror { position: absolute; image-rendering: pixelated; pointer-events: none; display: none; }
 body.hud #pad .on .mirror { display: block; }
-#pad .skill .mirror { left: 15px; top: 15px; width: 28px; height: 28px; }
-#pad .item .mirror { left: 14px; top: 15px; width: 30px; height: 28px; }
-body.hud #pad .s1.on { background-image: url(../assets/pad/btn-skill-on-1.png); }
-body.hud #pad .s3.on { background-image: url(../assets/pad/btn-skill-on-3.png); }
-body.hud #pad .s7.on { background-image: url(../assets/pad/btn-skill-on-7.png); }
-body.hud #pad .s9.on { background-image: url(../assets/pad/btn-skill-on-9.png); }
-body.hud #pad .item.on { background-image: url(../assets/pad/btn-item-on.png); }
+#pad .skill .mirror { left: 0; top: 0; width: 63px; height: 48px; }
+#pad .item .mirror { left: 35px; top: 8px; width: 26px; height: 24px; filter: drop-shadow(0 1px 0 rgba(0,0,0,.9)); }
+body.hud #pad .item.on { background-image: url(../assets/pad/pill-item-on.png); }
+body.hud #pad .item.on::after { display: none; }
 /* SAVE: centre of the 지도/메뉴 row, opens the save sheet */
-#save-pad { position: absolute; left: 148px; top: calc(34px + var(--ex, 0px) * .2); width: 97px; height: 24px; padding: 0; border: 0;
+#save-pad { position: absolute; left: 151.5px; top: calc(34px + var(--ex, 0px) * .2); width: 90px; height: 24px; padding: 0; border: 0;
   background: url(../assets/pad/txt-save.png) center / 100% 100% no-repeat; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); cursor: pointer; }
 #save-pad:active { filter: brightness(.7); transform: translateY(2px); }
 /* context: # is 스킵 while a dialogue box is up; potion/map/swap do nothing in menus, so they dim */
 #pad .swap .tag { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); padding: 1px 6px; border-radius: 3px; background: #c9a24a; color: #2a1f08;
   font: 700 10px/1 system-ui, "Apple SD Gothic Neo", sans-serif; font-style: normal; display: none; }
 body.dialogue #pad .swap .tag { display: block; }
-body.dialogue #pad .swap { filter: drop-shadow(0 0 8px rgba(239,224,176,.9)); }
 body.menu #pad .potion, body.menu #pad .map, body.menu #pad .swap, body.dialogue #pad .potion, body.dialogue #pad .map { opacity: .45; }
 
 /* landing: full-bleed night sky, falling snow, logo, one button; the progress bar shows while the engine downloads */

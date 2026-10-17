@@ -86,29 +86,36 @@ function menuUp(): boolean {
 }
 
 // Dialogue box = two full-width gold border rows 34px apart in the lower third (measured 255/289 on
-// 240x320). While it is up, # means 스킵, so the pad relabels that button.
+// 240x320), with a mostly dark text area between them (town stone walls also give bright full rows).
+// While it is up, # means 스킵, so the pad relabels that button.
 function dialogueUp(): boolean {
   const w = canvas.width, h = canvas.height;
   const y0 = Math.floor(h * 0.6);
   probe.width = w; probe.height = h - y0;
   probeCtx.drawImage(canvas, 0, y0, w, h - y0, 0, 0, w, h - y0);
   const d = probeCtx.getImageData(0, 0, w, h - y0).data;
-  const full: boolean[] = [];
+  const lit: number[] = [];
   for (let y = 0; y < h - y0; y++) {
     let n = 0;
     for (let x = 0; x < w; x++) { const p = (y * w + x) * 4; if (d[p] + d[p + 1] + d[p + 2] > 300) n++; }
-    full.push(n >= w * 0.8);
+    lit.push(n);
   }
-  for (let y = 0; y + 34 < full.length; y++) if (full[y] && full[y + 34]) return true;
+  for (let y = 0; y + 34 < lit.length; y++) {
+    if (lit[y] < w * 0.8 || lit[y + 34] < w * 0.8) continue;
+    let dark = 0;
+    for (let r = y + 3; r <= y + 31; r++) if (lit[r] < w * 0.25) dark++;   // text rows stay well under a quarter lit
+    if (dark >= 29 * 0.8) return true;
+  }
   return false;
 }
 
-// HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom (box
-// interiors measured on 240x320: y 302..314, x 61/84/105/126 for skills 1/3/7/9, 147 for the item,
-// anchored to the bottom edge). Copy them onto the pad buttons every frame while the bar is present.
-// icon interiors only: from y = h - 17, 12 rows. Skills 12x12, item = potion + count as one 13x12 (CROSSCHECK.md)
-const SLOTS: Record<string, [number, number]> = { "1": [68, 12], "3": [90, 12], "7": [111, 12], "9": [132, 12], "0": [156, 13] };
-const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!] }));
+// HUD mirror: the game draws its skill slots and the 회복 item slot in a bar at the bottom, anchored to
+// the bottom edge (measured on 240x320). Skills: the whole 21x16 slot (box + number + icon) at x
+// 60/82/104/126 (left border column included; the handoff said 61, one px short), y h-19, shown as is;
+// empty = fewer than 4 bright pixels in the icon area (x 8..19, y 2..13). Item: potion + count as one 13x12 at x 156, y h-17, pure black dropped (HANDOFF-FINAL.md).
+const SLOTS: Record<string, [number, number, number, number]> = {
+  "1": [60, 19, 21, 16], "3": [82, 19, 21, 16], "7": [104, 19, 21, 16], "9": [126, 19, 21, 16], "0": [156, 17, 13, 12] };
+const mirrors = Array.from(document.querySelectorAll<HTMLCanvasElement>(".mirror")).map((m) => ({ ctx: m.getContext("2d", { willReadFrequently: true })!, src: SLOTS[m.dataset.slot!], item: m.dataset.slot === "0" }));
 function hudBarUp(): boolean {
   const h = canvas.height;
   probe.width = 2; probe.height = 1;
@@ -122,19 +129,18 @@ function mirrorHud() {
   const up = hudBarUp();
   document.body.classList.toggle("hud", up);
   if (up) {
-    const sy = canvas.height - 17;
     for (const m of mirrors) {
-      const [sx, w] = m.src;
-      m.ctx.clearRect(0, 0, w, 12);
-      m.ctx.drawImage(canvas, sx, sy, w, 12, 0, 0, w, 12);
-      const img = m.ctx.getImageData(0, 0, w, 12), d = img.data;
+      const [sx, dy, w, h] = m.src;
+      m.ctx.clearRect(0, 0, w, h);
+      m.ctx.drawImage(canvas, sx, canvas.height - dy, w, h, 0, 0, w, h);
+      const img = m.ctx.getImageData(0, 0, w, h), d = img.data;
       let lit = 0;
-      for (let i = 0; i < d.length; i += 4) {
-        const sum = d[i] + d[i + 1] + d[i + 2];
-        if (sum === 0) d[i + 3] = 0;          // slot background is pure black, icons never are: drop the black square
-        else if (sum > 300) lit++;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4, sum = d[i] + d[i + 1] + d[i + 2];
+        if (m.item) { if (sum === 0) d[i + 3] = 0; else if (sum > 300) lit++; }   // item: drop the black square
+        else if (x >= 8 && x <= 19 && y >= 2 && y <= 13 && sum > 300) lit++;
       }
-      m.ctx.putImageData(img, 0, 0);
+      if (m.item) m.ctx.putImageData(img, 0, 0);
       m.ctx.canvas.closest(".key")!.classList.toggle("on", lit >= 4);   // slot has something registered
     }
   }
