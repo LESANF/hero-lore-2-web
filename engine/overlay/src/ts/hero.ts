@@ -214,11 +214,12 @@ async function boot() {
   console.log(`boot: engine ready ${((performance.now() - t0) / 1000).toFixed(1)}s`);
   dirs = createDirections(session!);
   mountInput(session!, document.getElementById("pad")!, document.getElementById("dpad")!, dirs);
-  // ponytail: tap OK every 250 ms until the menu shows; give up after 20 s and show whatever is there.
+  // ponytail: tap # every 250 ms until the menu shows; give up after 20 s and show whatever is there.
+  // Not OK: on a first visit the menu opens on 새로하기, and one OK too many started a new game behind the landing.
   // The publisher splash ignores keys for its first 30 ticks (cd.java), so ~3 s of this is the game itself.
   const until = Date.now() + 20_000;
   while (!menuUp() && Date.now() < until) {
-    await session!.key("5", true); await sleep(80); await session!.key("5", false);
+    await session!.key("#", true); await sleep(80); await session!.key("#", false);
     await sleep(250);
   }
   fill.style.transition = "none"; fill.style.width = "100%";   // full the moment START shows, no tween left behind
