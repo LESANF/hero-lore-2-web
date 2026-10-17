@@ -1,9 +1,11 @@
 """make_rogue_save.py <package dir with g1/n1/cf/0056194389.jar> <out.json> [map]: dual-dagger 로그 operator save.
 
-Start: `door` (default) = 납골당 지하4층 (map 49) right above the boss door (tile 12,12 = event 2 in the
-map's attribute layer), with the door's conditions set (quest var 22 = 1, flag 42), so walking down asks
-"보스룸으로 이동할까요?" and plays the 이안 intro. A number = that boss room directly (bosses spawn on entry):
-109 오딘 (final), 108 율리케, 107 지하연구소 수호물, 106 디미트리, 105 하인츠, 104 이안, 103 리이드가 당주.
+Start (third arg): `final` (default) = 신전지하 (map 62) two tiles below the stairs trigger (4,1) with
+flag 119 set, so walking up plays the 율리케 scene -> 율리케 (108) -> 오딘, the final boss (109).
+`ian` = 납골당 지하4층 (map 49) above the boss door (12,12) with quest var 22 = 1 and flag 42, so walking
+down asks "보스룸으로 이동할까요?" and plays the 이안 intro. Trigger tiles are the map attribute layer
+(ah.c, value = event id); conditions are the 31-byte event records (ae.a(byte[])). A number = that boss
+room directly: 109 오딘, 108 율리케, 107 지하연구소 수호물, 106 디미트리, 105 하인츠, 104 이안, 103 당주.
 Weapons also get what the bi enchant screen can add: 인장 at its max (+10 each), 특성 구 (cf.i) and
 속성 결정 (am.n).
 
@@ -67,11 +69,13 @@ for i, v in enumerate((70, 110, 160, 60, 50)):       # 힘 체력 민첩 의지 
 hero[29:44] = bytes([1, 2, 3, 4, 5] + [5] * 6 + [3] * 4)   # 5 combo stages, skills k0..k9 at p5..p14 (ac.a caps)
 hero[27] = 5
 st[67:71] = bytes([6, 3, 4, 2])                      # v = k+1: 번개난타 k5, 급소가격 k2, 맹독감염 k3, 민첩태세 k1 (t/sk2.tdf order)
-start = sys.argv[3] if len(sys.argv) > 3 else 'door'
-if start == 'door':
-    head[0:3] = bytes([49, 12, 9])
-    st[5] |= 1 << 2                                  # flag 42 = u.p bit (p[5] bit 2)
-    st[32 + 5] = (st[32 + 5] & ~0x30) | 0x10         # quest var 22 = 1 (u.q, 2 bits each)
+def flag(n): st[n // 8] |= 1 << (n % 8)                       # u.p bits
+def qvar(n, v): sh = n % 4 * 2; st[32 + n // 4] = st[32 + n // 4] & ~(3 << sh) | v << sh   # u.q, 2 bits each
+start = sys.argv[3] if len(sys.argv) > 3 else 'final'
+if start == 'final':
+    head[0:3] = bytes([62, 4, 3]); flag(119)
+elif start == 'ian':
+    head[0:3] = bytes([49, 12, 9]); flag(42); qvar(22, 1)
 else:
     head[0:3] = bytes([int(start), 7, 12])           # boss room, mid-floor tile
 gs[0], gs[1], gs[2] = bytes(head), bytes(hero), bytes(st)
