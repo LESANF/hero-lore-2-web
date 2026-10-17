@@ -24,6 +24,10 @@ body:not(.ready) #pad { visibility: hidden; }
 #pad .row { width: 100%; max-width: calc(430px * var(--s, 1)); padding: 0 calc(6px * var(--s, 1)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; }
 #pad .row.bot { justify-content: center; gap: calc(18px * var(--s, 1)); }
 #pad .cluster { display: flex; align-items: center; gap: calc(10px * var(--s, 1)); }
+/* nudge dpad out (and attack a little) past the row edge, never past the screen edge */
+body:not(.wide) #pad .row.mid { --edge: calc(max(0px, (100vw - 430px * var(--s, 1)) / 2) + 6px * var(--s, 1) - 4px); }
+body:not(.wide) #pad .row.mid #dpad { margin-left: calc(-1 * min(16px * var(--s, 1), var(--edge))); }
+body:not(.wide) #pad .row.mid .attack { margin-right: calc(-1 * min(6px * var(--s, 1), var(--edge))); }
 #pad .skills { display: grid; grid-template-columns: repeat(2, auto); gap: calc(12px * var(--s, 1)); }
 #pad .key { position: relative; flex: 0 0 auto; padding: 0; border: 0; background: transparent center / 100% 100% no-repeat; touch-action: none; user-select: none;
   -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(0,0,0,.55)); }
