@@ -69,7 +69,8 @@ and documented:
 | Title menu | 9 items incl. dead WAP / gift / quit | 6 items; network menus show a 준비중 popup; rating badge and publisher logo gone | `docs/05-game-patches.md` |
 | Controls | phone keypad 0–9 # * | game-boy style pad: d-pad, skill keys showing the in-game slot art, item / swap / back, keyboard on desktop | `engine/overlay/` |
 | Screens | fixed 240×320 | fills any phone in portrait; desktop and landscape put the controls beside the game | `hero.ts` `layout()` |
-| Saves | stuck in one browser | export / import as one JSON file | `saves.ts` |
+| Saving | 메뉴 → 시스템 → 세이브 → 예, five key presses | **SAVE** on the pad saves in game with one tap | `hero.ts` |
+| Save files | stuck in one browser | **FILE** under SAVE exports / imports one JSON file | `saves.ts` |
 
 ### Before / after
 
@@ -134,7 +135,7 @@ Full list per screen: `docs/03-controls.md`. Key hints show on the pad only with
 
 ## Saves
 
-The game saves into the browser (IndexedDB, per site). **SAVE** on the pad opens 세이브 내보내기 (one JSON
+**SAVE** on the pad saves in game in one tap (it types 메뉴 → 시스템 → 세이브 → 예 for you, field only). The game keeps its saves in the browser (IndexedDB, per site); **FILE** under SAVE opens 세이브 내보내기 (one JSON
 file with every stored entry) and 세이브 가져오기 (writes it back and reloads). Use it to move progress between
 devices or browsers.
 
