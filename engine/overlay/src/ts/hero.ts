@@ -6,7 +6,10 @@ import { audioReady, setMasterVolume, setPcmVolume } from "./midi";
 import { createDirections, mountInput, type Directions } from "./input";
 import { exportSaves, importSaves } from "./saves";
 
-const GAME_URL = new URLSearchParams(location.search).get("pkg") ?? "game/hero2.zip";
+// `?pkg=` swaps the package for local testing; same-origin only, so a link can't feed this site someone else's jar
+const pkgParam = new URLSearchParams(location.search).get("pkg");
+const sameOrigin = (u: string) => { try { return new URL(u, location.href).origin === location.origin; } catch { return false; } };
+const GAME_URL = pkgParam && sameOrigin(pkgParam) ? pkgParam : "game/hero2.zip";
 
 // Keypad codes the game reads (docs/01-analysis.md). Same hand positions as hero-lord-web.
 const KEY_MAP: Record<string, string> = {
