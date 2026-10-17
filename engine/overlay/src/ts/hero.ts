@@ -160,7 +160,7 @@ const KEY_CLICK = (key: string, down: boolean) => {
 // Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
 // tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
 // gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
-const S_MIN = 0.7, PAD_H = 316;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
+const S_MIN = 0.7, PAD_H = 350;                    // pad design height: divider 20 + top row + d-pad block + bottom row + 24 bottom margin
 function layout(w: number, h: number) {
   const cs = getComputedStyle(document.documentElement);
   const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;
@@ -171,7 +171,7 @@ function layout(w: number, h: number) {
   const wide = gutter >= 200;
   if (wide) {
     gameW = wideW;
-    s = Math.min(1.6, (gutter - 40) / 270, vh / 430);       // right gutter holds skills + attack: 232 design px wide
+    s = Math.min(1.6, (gutter - 40) / 300, vh / 470);       // right gutter holds skills + attack: 278 design px wide
   } else {
     const sMin = vw > 480 ? 0.9 : S_MIN;           // phones: full-width game first; wider (foldable open, square windows): keep the pad big
     gameW = Math.min(vw, Math.floor((vh - PAD_H * sMin) / ratio));
