@@ -28,7 +28,7 @@ body:not(.ready) #pad { visibility: hidden; }
 #pad .pill::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 32px; transform: translate(-50%, -50%); background: center / contain no-repeat; }
 #pad .map { left: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .map::after { background-image: url(../assets/pad/ico-map.png); }
 #pad .menu { right: 12px; top: calc(26px + var(--ex, 0px) * .2); } #pad .menu::after { background-image: url(../assets/pad/ico-menu.png); }
-#pad .potion { left: 92px; top: calc(260px + var(--ex, 0px) * .8); } #pad .potion::after { background-image: url(../assets/pad/ico-potion.png); }
+#pad .item { width: 58px; height: 58px; left: 111px; top: calc(251px + var(--ex, 0px) * .8); background-image: url(../assets/pad/btn-item.png); }
 #pad .swap { left: 205px; top: calc(260px + var(--ex, 0px) * .8); } #pad .swap::after { background-image: url(../assets/pad/ico-swap.png); }
 #pad .skill { width: 58px; height: 58px; }
 #pad .s1 { left: 174px; top: calc(108px + var(--ex, 0px) * .5); background-image: url(../assets/pad/btn-skill-1.png); }
@@ -44,13 +44,21 @@ body:not(.ready) #pad { visibility: hidden; }
 #dpad .up { left: 50px; top: 4px; } #dpad .left { left: 4px; top: 50px; } #dpad .right { left: 96px; top: 50px; } #dpad .down { left: 50px; top: 96px; }
 #dpad .arm.on { background: rgba(239,224,176,.35); box-shadow: inset 0 0 10px rgba(239,224,176,.6); }
 #dpad .up small { top: -2px; } #dpad .down small { top: auto; bottom: -2px; } #dpad .left small { left: 2px; transform: none; } #dpad .right small { left: auto; right: 2px; transform: none; }
-/* HUD mirror: the game's own skill icons / item slot copied onto the buttons, translucent so the art shows through */
-.mirror { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); image-rendering: pixelated; opacity: .92; display: none; pointer-events: none; }
-body.hud .mirror { display: block; }
-#pad .skill .mirror { width: 30px; height: 30px; }
-#pad .potion .mirror { width: 40px; height: 32px; }
-body.hud #pad .potion::after { display: none; }   /* the game's own item icon + count replaces the generic potion */
-.mirror.empty { display: none !important; }        /* an empty skill slot is just black: keep the button's digit */
+/* HUD mirror: the game's own skill icons / item (potion + count) copied onto the buttons; black made
+   transparent, and a registered slot swaps the button to its *-on art (CROSSCHECK.md) */
+.mirror { position: absolute; image-rendering: pixelated; pointer-events: none; display: none; filter: drop-shadow(0 1px 0 rgba(0,0,0,.9)); }
+body.hud #pad .on .mirror { display: block; }
+#pad .skill .mirror { left: 15px; top: 15px; width: 28px; height: 28px; }
+#pad .item .mirror { left: 14px; top: 15px; width: 30px; height: 28px; }
+body.hud #pad .s1.on { background-image: url(../assets/pad/btn-skill-on-1.png); }
+body.hud #pad .s3.on { background-image: url(../assets/pad/btn-skill-on-3.png); }
+body.hud #pad .s7.on { background-image: url(../assets/pad/btn-skill-on-7.png); }
+body.hud #pad .s9.on { background-image: url(../assets/pad/btn-skill-on-9.png); }
+body.hud #pad .item.on { background-image: url(../assets/pad/btn-item-on.png); }
+/* SAVE: centre of the 지도/메뉴 row, opens the save sheet */
+#save-pad { position: absolute; left: 148px; top: calc(34px + var(--ex, 0px) * .2); width: 97px; height: 24px; padding: 0; border: 0;
+  background: url(../assets/pad/txt-save.png) center / 100% 100% no-repeat; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); cursor: pointer; }
+#save-pad:active { filter: brightness(.7); transform: translateY(2px); }
 /* context: # is 스킵 while a dialogue box is up; potion/map/swap do nothing in menus, so they dim */
 #pad .swap .tag { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); padding: 1px 6px; border-radius: 3px; background: #c9a24a; color: #2a1f08;
   font: 700 10px/1 system-ui, "Apple SD Gothic Neo", sans-serif; font-style: normal; display: none; }
