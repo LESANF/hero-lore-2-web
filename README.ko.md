@@ -31,14 +31,10 @@
 > [!NOTE]
 > **1편도 브라우저에서:** [영웅서기: 솔티아의 바람 리마스터 웹판 (hero-lord-web)](https://github.com/LESANF/hero-lord-web) · [바로 플레이](https://lesanf.github.io/hero-lord-web/)
 
-<div align="center">
-
-### ▶ Play Video
-
-<a href="docs/media/gameplay.mp4"><img src="docs/img/play.gif" width="300" alt="Play Video" /></a><br />
-<sub>아이폰 실제 플레이 · 하이라이트, 소리 없음 · <a href="docs/media/gameplay.mp4">전체 54초 영상</a></sub>
-
-</div>
+> <img src="docs/img/play-video.svg" height="24" alt="Play Video" />
+>
+> <a href="docs/media/gameplay.mp4"><img src="docs/img/play.gif" width="300" alt="Play Video" /></a><br />
+> <sub>아이폰 실제 플레이 · 하이라이트, 소리 없음 · <a href="docs/media/gameplay.mp4">전체 54초 영상</a></sub>
 
 <div align="center">
 
