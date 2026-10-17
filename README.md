@@ -1,25 +1,57 @@
-# hero-lore-2-web
+<div align="center">
 
-**English** | [한국어](README.ko.md)
+**English** · [한국어](README.ko.md)
+
+<br />
+
+<img src="engine/overlay/src/assets/logo.png" width="440" alt="영웅서기 2: 빙해의 검사 — fan-made web port" />
+
+### Heroes Lore 2: Knight of Frozen Sea, in the browser
+
+**The 2007 Korean feature-phone RPG on a WebAssembly emulator, playable on phones and desktops.**
+
+[![Fan-made](https://img.shields.io/badge/Fan--made-c9a24a?style=flat-square)](#notice)
+[![No ads](https://img.shields.io/badge/No_ads-2ea043?style=flat-square)](#notice)
+[![Non-commercial](https://img.shields.io/badge/Non--commercial-2ea043?style=flat-square)](#notice)
+[![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?style=flat-square&logo=webassembly&logoColor=white)](#how-it-works)
+[![engine: wie](https://img.shields.io/badge/engine-wie-0b1326?style=flat-square)](https://github.com/dlunch/wie)
+[![MIT license](https://img.shields.io/badge/license-MIT-f4c430?style=flat-square)](LICENSE)
+
+[What it improves](#what-this-port-improves) · [Before / after](#before--after) · [How it works](#how-it-works) · [Controls](#controls) · [Saves](#saves) · [Build](#build)
+
+</div>
+
+<a id="notice"></a>
 
 > [!IMPORTANT]
-> ## Fan-made · No ads · No revenue
-> **This is an unofficial fan project.** It carries no ads and takes no money in any form.
-> All rights to the game belong to its developer and current rights holder.
+> **Fan-made · No ads · No revenue.** This is an unofficial fan project. It carries no ads and takes no money
+> in any form. All rights to the game belong to its developer and current rights holder.
 > **It will be taken down immediately on request or if any issue arises.**
 
-## This game was made by Hands-On Mobile Korea
+<div align="center">
+
+<table>
+<tr>
+<td align="center"><img src="docs/img/landing.jpg" width="250" alt="Landing" /><br /><sub>Landing</sub></td>
+<td align="center"><img src="docs/img/phone.jpg" width="250" alt="Phone (portrait)" /><br /><sub>Phone (portrait)</sub></td>
+</tr>
+</table>
+
+<img src="docs/img/pc.jpg" width="820" alt="Desktop / landscape: controls beside the game" /><br />
+<sub>Desktop / landscape: controls beside the game</sub>
+
+</div>
+
+---
+
+## Made by Hands-On Mobile Korea
 
 > **영웅서기 2: 빙해의 검사 (Heroes Lore: Knight of Frozen Sea, 2007) was developed by Hands-On Mobile Korea
 > (formerly mforma Korea), later part of EA Mobile.** This repository is only the tooling that runs the
 > shipped mobile build in a web browser. The game's graphics, sound, script, data and design were not made here.
 
-- Live: paused while it is tested locally (it will return at https://lesanf.github.io/hero-lore-2-web/)
-- Part 1 in the browser: [hero-lord-web](https://github.com/LESANF/hero-lord-web)
-
-| Phone | Desktop |
-|---|---|
-| ![phone](docs/img/phone.jpg) | ![desktop](docs/img/pc.jpg) |
+- **Live:** paused while it is tested locally (it will return at https://lesanf.github.io/hero-lore-2-web/)
+- **Part 1 in the browser:** [hero-lord-web](https://github.com/LESANF/hero-lord-web)
 
 ## What this port improves
 

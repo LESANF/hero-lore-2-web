@@ -1,25 +1,57 @@
-# hero-lore-2-web
+<div align="center">
 
-[English](README.md) | **한국어**
+[English](README.md) · **한국어**
+
+<br />
+
+<img src="engine/overlay/src/assets/logo.png" width="440" alt="영웅서기 2: 빙해의 검사 — 팬메이드 웹 포팅" />
+
+### 영웅서기 2: 빙해의 검사, 브라우저에서
+
+**2007년 피처폰 RPG를 WebAssembly 에뮬레이터로, 폰과 PC 브라우저에서 바로.**
+
+[![팬메이드](https://img.shields.io/badge/%ED%8C%AC%EB%A9%94%EC%9D%B4%EB%93%9C-c9a24a?style=flat-square)](#notice)
+[![광고 없음](https://img.shields.io/badge/%EA%B4%91%EA%B3%A0_%EC%97%86%EC%9D%8C-2ea043?style=flat-square)](#notice)
+[![수익 없음](https://img.shields.io/badge/%EC%88%98%EC%9D%B5_%EC%97%86%EC%9D%8C-2ea043?style=flat-square)](#notice)
+[![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?style=flat-square&logo=webassembly&logoColor=white)](#how-it-works)
+[![engine: wie](https://img.shields.io/badge/engine-wie-0b1326?style=flat-square)](https://github.com/dlunch/wie)
+[![MIT license](https://img.shields.io/badge/license-MIT-f4c430?style=flat-square)](LICENSE)
+
+[개선한 것](#이-포팅에서-개선한-것) · [비포 / 애프터](#비포--애프터) · [동작 방식](#동작-방식) · [조작](#조작) · [세이브](#세이브) · [빌드](#빌드)
+
+</div>
+
+<a id="notice"></a>
 
 > [!IMPORTANT]
-> ## 팬메이드 · 광고 없음 · 수익 없음
-> **이 저장소는 개인이 만든 비공식 팬 프로젝트입니다.** 광고를 붙이지 않고, 어떤 형태로도 돈을 받지 않습니다.
-> 게임의 권리는 원 개발사와 현 권리자에게 있습니다.
+> **팬메이드 · 광고 없음 · 수익 없음.** 이 저장소는 개인이 만든 비공식 팬 프로젝트입니다. 광고를 붙이지 않고,
+> 어떤 형태로도 돈을 받지 않습니다. 게임의 권리는 원 개발사와 현 권리자에게 있습니다.
 > **권리자의 요청이 있거나 문제가 생기면 즉시 삭제합니다.**
 
-## 이 게임은 핸즈온 모바일 코리아의 작품입니다
+<div align="center">
+
+<table>
+<tr>
+<td align="center"><img src="docs/img/landing.jpg" width="250" alt="시작 화면" /><br /><sub>시작 화면</sub></td>
+<td align="center"><img src="docs/img/phone.jpg" width="250" alt="폰 (세로)" /><br /><sub>폰 (세로)</sub></td>
+</tr>
+</table>
+
+<img src="docs/img/pc.jpg" width="820" alt="PC / 가로 화면: 게임 옆에 조작부" /><br />
+<sub>PC / 가로 화면: 게임 옆에 조작부</sub>
+
+</div>
+
+---
+
+## 핸즈온 모바일 코리아의 작품입니다
 
 > **〈영웅서기 2: 빙해의 검사〉(Heroes Lore: Knight of Frozen Sea, 2007)는 핸즈온 모바일 코리아(전 엠포마 코리아,
 > 이후 EA 모바일)가 만든 게임입니다.** 이 저장소는 출시된 휴대폰 버전을 브라우저에서 돌리는 도구일 뿐이며,
 > 게임의 그래픽·사운드·스크립트·데이터·기획은 여기서 만든 것이 아닙니다.
 
-- 라이브: 로컬 테스트 중이라 잠시 내려 두었습니다 (다시 열면 https://lesanf.github.io/hero-lore-2-web/)
-- 1편 웹판: [hero-lord-web](https://github.com/LESANF/hero-lord-web)
-
-| 폰 | PC |
-|---|---|
-| ![phone](docs/img/phone.jpg) | ![desktop](docs/img/pc.jpg) |
+- **라이브:** 로컬 테스트 중이라 잠시 내려 두었습니다 (다시 열면 https://lesanf.github.io/hero-lore-2-web/)
+- **1편 웹판:** [hero-lord-web](https://github.com/LESANF/hero-lord-web)
 
 ## 이 포팅에서 개선한 것
 
