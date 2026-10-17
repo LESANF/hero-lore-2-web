@@ -16,8 +16,6 @@ PATCHES = [
     # class, find (hex), replace (hex), what
     ("bw.class", "08081014b6001c", "08081014585857", "title: no 전체 rating badge (drawImage -> pop2 pop2 pop)"),
     ("bw.class", "101a641011b6001c", "101a641011585857", "title: no HANDS-ON MOBILE logo (drawImage -> pop2 pop2 pop)"),
-    ("cj.class", "1006545904100a545905100e5459061012", "100a545904100f545905101454590610 19".replace(" ", ""),
-     "game speed table SLOW/NORMAL/FAST/FASTER = 10/15/20/25 fps (was 6/10/14/18); all game logic is per frame"),
     ("cd.class", "1064a4", "1001a4", "publisher splash: auto-advance after 1 tick instead of 100 (cd.b: if a > 100 -> state 1)"),
     ("cd.class", "101ea4", "1000a4", "publisher splash: a key skips it immediately instead of after 30 ticks (cd.keyPressed)"),
     ("bg.class", "1009b7", "1006b7", "title menu: 6 items (새로하기 이어하기 환경설정 도움말 네트워크창고 네트워크대전); drops 선물하기/껨존가기 (WAP) and 게임종료"),
