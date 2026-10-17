@@ -18,10 +18,11 @@ if [ "$(git -C build/wie rev-parse HEAD 2>/dev/null || true)" != "$COMMIT" ]; th
 fi
 git -C build/wie checkout -q -- wie-web/src/ts/midi.ts   # undo our sed before re-applying
 
-# Overlay: our page, entry config, and two one-line patches so the bundle works under a sub-path
+# Overlay: our page, entry config, and two one-line sed patches so the bundle works under a sub-path
 # (GitHub Pages serves this project at /hero-lore-2-web/, wie assumes the site root).
 cp -R engine/overlay/. build/wie/wie-web/
 sed -i.bak 's#"/spessasynth_processor.min.js"#new URL("spessasynth_processor.min.js", document.baseURI).href#' build/wie/wie-web/src/ts/midi.ts
+sed -i.bak 's#^let audioReady:#export let audioReady:#' build/wie/wie-web/src/ts/midi.ts   # page resumes the AudioContext on the start tap
 rm -f build/wie/wie-web/src/ts/midi.ts.bak
 
 (cd build/wie && npm ci --no-audit --no-fund --silent && npx webpack --config wie-web/webpack.config.hero.ts)

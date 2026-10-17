@@ -38,44 +38,55 @@ html, body { margin: 0; padding: 0; height: 100%; background: #0b1326; overflow:
 @keyframes fall { to { transform: translate3d(-30px, 110vh, 0); opacity: .2; } }
 @media (prefers-reduced-motion: reduce) { .snow { display: none; } }
 
-/* touch layer — same arrangement as hero-lord-web */
+/* touch layer: floating stick lower-left, glass buttons right. Game HUD (HP/skills) is at the
+   bottom of the game image, so on phones the controls live in the band below it, not over it. */
 #zone { position: fixed; left: 0; bottom: 0; width: 50vw; height: 60vh; touch-action: none; }
 #stick { position: fixed; width: 0; height: 0; pointer-events: none; display: none; }
 #stick.show { display: block; }
 #stick .ring { position: absolute; left: 0; top: 0; width: 150px; height: 150px; transform: translate(-50%, -50%); border-radius: 50%;
-  background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.75); box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+  background: rgba(255,255,255,.10); border: 1.5px solid rgba(255,255,255,.55); box-shadow: 0 2px 10px rgba(0,0,0,.35); }
 #stick .knob { position: absolute; left: 0; top: 0; width: 56px; height: 56px; transform: translate(-50%, -50%); border-radius: 50%;
-  background: rgba(255,255,255,.92); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  background: rgba(255,255,255,.9); box-shadow: 0 2px 8px rgba(0,0,0,.4); }
 #stick .hint { position: absolute; left: 0; top: -96px; transform: translateX(-50%); font: 600 11px/1 system-ui; color: #fff; text-shadow: 0 1px 2px #000; }
 #hud { position: fixed; inset: 0; pointer-events: none; }
 body:not(.ready) #hud, body:not(.ready) #zone { display: none; }   /* controls appear with the game */
 #hud button { pointer-events: auto; position: absolute; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
-  border: 2px solid #2b4a8a; background: rgba(255,255,255,.88); color: #1b2a4a; font: 700 15px/1 system-ui, "Apple SD Gothic Neo", sans-serif;
-  box-shadow: 0 3px 0 #1b2a4a; cursor: pointer; }
-#hud button.down { background: #2b63d9; color: #fff; transform: translateY(2px); box-shadow: 0 1px 0 #1b2a4a; }
+  border: 1.5px solid rgba(255,255,255,.38); background: rgba(16,22,40,.55); color: #fff; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  font: 700 14px/1 system-ui, "Apple SD Gothic Neo", sans-serif; letter-spacing: .02em; text-shadow: 0 1px 2px rgba(0,0,0,.6);
+  box-shadow: 0 4px 14px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18); cursor: pointer; transition: background .08s, transform .08s; }
+#hud button.down { background: rgba(255,255,255,.88); color: #15203a; text-shadow: none; transform: scale(.94); }
 #hud button small { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); padding: 1px 5px; border-radius: 4px;
-  background: #eef2ff; border: 1px solid #2b4a8a; color: #1b2a4a; font: 600 9px/1 ui-monospace, Menlo, monospace; white-space: nowrap; }
-#hud .key { right: 12px; width: 84px; height: 46px; border-radius: 8px; }
+  background: rgba(16,22,40,.8); border: 1px solid rgba(255,255,255,.3); color: #fff; font: 600 9px/1 ui-monospace, Menlo, monospace; white-space: nowrap; }
+@media (pointer: coarse) { #hud button small, #stick .hint { display: none; } }   /* key hints only mean something with a keyboard */
+#hud .key { right: 12px; width: 76px; height: 40px; border-radius: 999px; font-size: 13px; }
 #hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 18px); }
-#hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 80px); }
+#hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 70px); }
 #hud .round { border-radius: 50%; }
-#hud .big { right: 18px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 112px; height: 112px; font-size: 18px; }
-#hud .s1 { right: 140px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 58px; height: 58px; }
-#hud .s3 { right: 140px; bottom: calc(env(safe-area-inset-bottom) + 92px); width: 58px; height: 58px; }
-#hud .s7 { right: 206px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 58px; height: 58px; }
-#hud .s9 { right: 206px; bottom: calc(env(safe-area-inset-bottom) + 92px); width: 58px; height: 58px; }
-#hud .item { right: 24px; bottom: calc(env(safe-area-inset-bottom) + 150px); width: 58px; height: 58px; }
-#hud .swap { right: 92px; bottom: calc(env(safe-area-inset-bottom) + 160px); width: 44px; height: 44px; font-size: 13px; }
-@media (pointer: fine) and (min-width: 900px) { #stick .hint { display: none; } }
+#hud .big { right: 18px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 104px; height: 104px; font-size: 17px; border-color: rgba(255,170,150,.6); }
+#hud .s1 { right: 136px; bottom: calc(env(safe-area-inset-bottom) + 90px); width: 56px; height: 56px; }
+#hud .s3 { right: 136px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 56px; height: 56px; }
+#hud .s7 { right: 200px; bottom: calc(env(safe-area-inset-bottom) + 90px); width: 56px; height: 56px; }
+#hud .s9 { right: 200px; bottom: calc(env(safe-area-inset-bottom) + 24px); width: 56px; height: 56px; }
+#hud .item { right: 26px; bottom: calc(env(safe-area-inset-bottom) + 142px); width: 56px; height: 56px; }
+#hud .swap { right: 92px; bottom: calc(env(safe-area-inset-bottom) + 154px); width: 46px; height: 46px; font-size: 12px; }
 
-/* portrait phone: game on top, controls in the band below it (nothing overlaps the game's HP bar) */
+/* portrait phone: the game takes the full width at the top; the controls get whatever is left below.
+   --band never drops under 200px, so on short phones the game shrinks a little instead. */
 @media (orientation: portrait) {
-  /* fixed bands: 72px for 메뉴/지도 on top, 220px for the stick/buttons below; the game scales into the rest */
-  #stage { align-items: flex-start; box-sizing: border-box;
-    padding: calc(env(safe-area-inset-top) + 72px) 0 calc(env(safe-area-inset-bottom) + 220px); }
+  :root { --band: clamp(200px, calc(100dvh - env(safe-area-inset-top) - 100vw * 4 / 3), 340px); }
+  #stage { align-items: flex-start; box-sizing: border-box; padding: env(safe-area-inset-top) 0 var(--band); }
   #canvas { height: 100%; width: auto; max-width: 100%; }
-  #hud .key[data-key="CLR"] { top: calc(env(safe-area-inset-top) + 16px); right: 12px; }
-  #hud .key[data-key="*"] { top: calc(env(safe-area-inset-top) + 16px); right: 104px; }
+  #zone { height: max(60vh, var(--band)); }
+  #hud .key[data-key] { top: auto; bottom: calc(env(safe-area-inset-bottom) + var(--band) - 52px); width: 64px; height: 34px; font-size: 12px; }
+  #hud .key[data-key="CLR"] { left: 14px; right: auto; }
+  #hud .key[data-key="*"] { left: 86px; right: auto; }
+  #hud .big { width: 96px; height: 96px; bottom: calc(env(safe-area-inset-bottom) + 20px); }
+  #hud .s1 { right: 126px; bottom: calc(env(safe-area-inset-bottom) + 84px); width: 54px; height: 54px; }
+  #hud .s3 { right: 126px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 54px; height: 54px; }
+  #hud .s7 { right: 188px; bottom: calc(env(safe-area-inset-bottom) + 84px); width: 54px; height: 54px; }
+  #hud .s9 { right: 188px; bottom: calc(env(safe-area-inset-bottom) + 22px); width: 54px; height: 54px; }
+  #hud .item { right: 24px; bottom: calc(env(safe-area-inset-bottom) + 130px); width: 52px; height: 52px; }
+  #hud .swap { right: 86px; bottom: calc(env(safe-area-inset-bottom) + 140px); width: 44px; height: 44px; }
 }
 
 /* save sheet */
