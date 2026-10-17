@@ -9,6 +9,7 @@ import commonConfig from "./webpack.config.common.ts";
 const base = commonConfig("production");
 base.plugins = (base.plugins ?? []).filter(p => !(p instanceof HtmlBundlerPlugin));
 base.plugins.push(
+  new webpack.DefinePlugin({ __APP_VERSION__: JSON.stringify(process.env.HERO_VERSION ?? "dev") }),
   new HtmlBundlerPlugin({
     entry: { index: { import: "src/html/hero.html" } },
     js: { filename: "assets/js/[name].[contenthash:8].js" },

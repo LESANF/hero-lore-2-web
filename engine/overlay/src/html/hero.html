@@ -14,9 +14,25 @@
 <script src="@ts/hero.ts" defer></script>
 </head>
 <body>
-<div id="stage"><canvas id="canvas" width="240" height="320"></canvas></div>
-<div id="zone"></div>
-<div id="stick"><div class="ring"></div><div class="knob"></div><span class="hint">WASD</span></div>
+<div id="col">
+  <div id="stage"><canvas id="canvas" width="240" height="320"></canvas></div>
+  <div id="pad"><div id="pad-inner">
+    <div class="divider"></div>
+    <button class="key pill map" data-key="*"><small>;</small></button>
+    <button class="key pill menu" data-key="CLR"><small>ESC</small></button>
+    <div id="dpad">
+      <span class="arm up" data-dir="2"><small>W</small></span><span class="arm left" data-dir="4"><small>A</small></span>
+      <span class="arm right" data-dir="6"><small>D</small></span><span class="arm down" data-dir="8"><small>S</small></span>
+    </div>
+    <button class="key skill s1" data-key="1"><small>U</small><canvas class="mirror" data-slot="1" width="12" height="13"></canvas></button>
+    <button class="key skill s3" data-key="3"><small>I</small><canvas class="mirror" data-slot="3" width="12" height="13"></canvas></button>
+    <button class="key skill s7" data-key="7"><small>J</small><canvas class="mirror" data-slot="7" width="12" height="13"></canvas></button>
+    <button class="key skill s9" data-key="9"><small>K</small><canvas class="mirror" data-slot="9" width="12" height="13"></canvas></button>
+    <button class="key attack" data-key="5"><small>SPACE</small></button>
+    <button class="key pill potion" data-key="0"><small>O</small><canvas class="mirror" data-slot="0" width="16" height="13"></canvas></button>
+    <button class="key pill swap" data-key="#"><small>P</small><i class="tag">스킵</i></button>
+  </div></div>
+</div>
 <button id="save-toggle" class="pill" type="button">세이브</button>
 <div id="save-sheet" hidden>
   <div class="card">
@@ -29,21 +45,6 @@
     <button id="save-close" type="button" class="ghost">닫기</button>
   </div>
 </div>
-<div id="hud">
-  <div class="top">
-    <button class="key" data-key="CLR"><small>ESC</small>메뉴</button>
-    <button class="key" data-key="*"><small>M</small>지도</button>
-  </div>
-  <div class="cluster">
-    <button class="round big" data-key="5"><small>SPACE</small>공격</button>
-    <button class="round s1" data-key="1"><small>1</small>스킬</button>
-    <button class="round s3" data-key="3"><small>3</small>스킬</button>
-    <button class="round s7" data-key="7"><small>7</small>스킬</button>
-    <button class="round s9" data-key="9"><small>9</small>스킬</button>
-    <button class="round item" data-key="0"><small>Q</small>아이템</button>
-    <button class="round swap" data-key="#"><small>E</small>교체</button>
-  </div>
-</div>
 <div id="landing">
   <div class="snow" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <img id="logo" src="../assets/logo.png" alt="영웅서기 2: 빙해의 검사">
@@ -51,6 +52,7 @@
   <div id="bar"><div id="fill"></div></div>
   <small id="detail">준비 중</small>
   <pre id="notice"></pre>
+  <small id="ver"></small>
 </div>
 </body>
 </html>
