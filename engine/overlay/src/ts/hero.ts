@@ -160,7 +160,7 @@ const KEY_CLICK = (key: string, down: boolean) => {
 // Wide when each side of a full-height game keeps a >= 200px gutter (PC windows, phone landscape,
 // tablets): controls go into the gutters. Otherwise portrait: game full width on top, the pad below
 // gives way first (down to S_MIN) before the game narrows; foldables/tablets in portrait centre it.
-const S_MIN = 0.62, PAD_H = 270;                    // pad design height: divider 20 + top row + d-pad block + bottom row
+const S_MIN = 0.7, PAD_H = 270;                    // pad design height: divider 20 + top row + d-pad block + bottom row
 function layout(w: number, h: number) {
   const cs = getComputedStyle(document.documentElement);
   const sat = parseFloat(cs.getPropertyValue("--sat")) || 0, sab = parseFloat(cs.getPropertyValue("--sab")) || 0;

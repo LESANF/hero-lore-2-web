@@ -7,8 +7,8 @@ img, canvas { -webkit-user-drag: none; }
 html, body { margin: 0; padding: 0; height: 100%; background: #060a16; overflow: hidden; touch-action: none;
   font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
 /* Layout (hero.ts layout()): sizes are design px times --s, so every piece scales together.
-   Portrait (phones, narrow windows): game full width on top, pad below in three rows; d-pad hugs the
-   left edge and skills + attack the right, where the thumbs are. Wide (PC, landscape, tablets): game
+   Portrait (phones, narrow windows): game full width on top, pad below in three rows kept together in
+   the middle (rows are 430 design px wide, a little roomier than the 393 design). Wide (PC, landscape, tablets): game
    centred at full height, controls split into the side gutters (body.wide). */
 #col { position: fixed; inset: 0; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); box-sizing: border-box; }
 #stage { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: #000; }
@@ -21,7 +21,7 @@ body:not(.ready) #pad { visibility: hidden; }
   background: #0d1020 url(../assets/pad/pad-tile.png) repeat; background-size: 128px 128px; }
 /* the ornament strip repeats across whatever width there is instead of stretching */
 #pad .divider { position: absolute; left: 0; right: 0; top: 0; height: calc(20px * var(--s, 1)); background: url(../assets/pad/pad-divider-tile.png) center top / auto 100% repeat-x; }
-#pad .row { width: 100%; max-width: 600px; padding: 0 max(8px, calc(10px * var(--s, 1))); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; }
+#pad .row { width: 100%; max-width: calc(430px * var(--s, 1)); padding: 0 calc(6px * var(--s, 1)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; }
 #pad .row.bot { justify-content: center; gap: calc(18px * var(--s, 1)); }
 #pad .cluster { display: flex; align-items: center; gap: calc(10px * var(--s, 1)); }
 #pad .skills { display: grid; grid-template-columns: repeat(2, auto); gap: calc(12px * var(--s, 1)); }
