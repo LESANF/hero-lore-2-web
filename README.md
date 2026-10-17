@@ -55,7 +55,7 @@
 ## What this port improves
 
 The 2007 build was made for a 240×320 keypad phone. Running it as-is in a browser works, but it boots
-slowly, plays silent, runs at 10 fps and has no way to hold a phone. These are the changes, each one small
+slowly, plays silent, shakes hard on every boss hit and has no way to hold a phone. These are the changes, each one small
 and documented:
 
 | | Before | After | Where |
@@ -63,7 +63,6 @@ and documented:
 | Sound | silent (the emulator's MMF clip class was a stub) | music and effects | `engine/patches/skt-audio-clip.patch` |
 | 이어하기 load | 5.3 s | 0.6 s | `engine/patches/fs-cache.patch` |
 | Boot to title | 4.9 s, publisher splash + PRESS ANY KEY | 2.4 s behind the landing screen, intro skipped | `tools/patch_game.py`, `hero.ts` |
-| Game speed | NORMAL = 10 fps | NORMAL = 15 fps (option still picks one of four) | `docs/05-game-patches.md` |
 | Screen shake | 4–5 px on every boss hit and skill | a quarter of it | `docs/05-game-patches.md` |
 | Title menu | 9 items incl. dead WAP / gift / quit | 6 items; network menus show a 준비중 popup; rating badge and publisher logo gone | `docs/05-game-patches.md` |
 | Controls | phone keypad 0–9 # * | game-boy style pad: d-pad, skill keys showing the in-game slot art, item / swap / back, keyboard on desktop | `engine/overlay/` |
@@ -81,10 +80,10 @@ after = this branch.
 | ![boot](docs/img/ba-boot.gif) | ![load](docs/img/ba-load.gif) |
 | splash and PRESS ANY KEY on the left; booted behind the landing on the right | the old engine waited a frame per file read |
 
-| Speed: walking, NORMAL | Shake: casting the four skills |
-|---|---|
-| ![speed](docs/img/ba-speed.gif) | ![shake](docs/img/ba-shake.gif) |
-| 10 → 15 fps | a quarter of the old amplitude |
+| Shake: casting the four skills |
+|---|
+| ![shake](docs/img/ba-shake.gif) |
+| a quarter of the old amplitude |
 
 **Controls and screen**
 
