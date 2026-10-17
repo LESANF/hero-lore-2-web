@@ -28,6 +28,9 @@
 > in any form. All rights to the game belong to its developer and current rights holder.
 > **It will be taken down immediately on request or if any issue arises.**
 
+> [!NOTE]
+> **Part 1 in the browser:** [영웅서기: 솔티아의 바람 리마스터 웹판 (hero-lord-web)](https://github.com/LESANF/hero-lord-web) · [play](https://lesanf.github.io/hero-lord-web/)
+
 <div align="center">
 
 <table>
@@ -43,15 +46,6 @@
 </div>
 
 ---
-
-## Made by Hands-On Mobile Korea
-
-> **영웅서기 2: 빙해의 검사 (Heroes Lore: Knight of Frozen Sea, 2007) was developed by Hands-On Mobile Korea
-> (formerly mforma Korea), later part of EA Mobile.** This repository is only the tooling that runs the
-> shipped mobile build in a web browser. The game's graphics, sound, script, data and design were not made here.
-
-- **Live:** paused while it is tested locally (it will return at https://lesanf.github.io/hero-lore-2-web/)
-- **Part 1 in the browser:** [hero-lord-web](https://github.com/LESANF/hero-lord-web)
 
 ## What this port improves
 
